@@ -4,7 +4,7 @@ import pygame
 
 from states.state import State
 from ui.sprite_loader import SpriteLoader
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
+from config import (SCREEN_WIDTH, WHITE,
                     BG_DARK, YELLOW, GREEN)
 
 

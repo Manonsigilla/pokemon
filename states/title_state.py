@@ -4,8 +4,8 @@ import pygame
 
 from states.state import State
 from ui.button import Button
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                    BG_DARK, YELLOW, RED, BLUE)
+from config import (SCREEN_WIDTH, WHITE,
+                    BG_DARK, YELLOW, RED)
 
 
 class TitleState(State):

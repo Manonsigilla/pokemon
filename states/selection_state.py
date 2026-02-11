@@ -6,8 +6,8 @@ import pygame
 from states.state import State
 from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, BG_DARK,
-                    YELLOW, AVAILABLE_POKEMON_IDS, BORDER_COLOR)
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
+                    YELLOW, AVAILABLE_POKEMON_IDS)
 
 
 class SelectionState(State):

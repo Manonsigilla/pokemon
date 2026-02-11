@@ -9,10 +9,9 @@ from ui.hp_bar import HPBar
 from ui.text_box import TextBox
 from ui.move_menu import MoveMenu
 from ui.sprite_loader import SpriteLoader
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, BG_LIGHT,
-                    BORDER_COLOR, PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
                     PLAYER_INFO_POS, ENEMY_INFO_POS, TEXT_BOX_RECT,
-                    MOVE_MENU_RECT, MOVE_TEXT_RECT, YELLOW)
+                    MOVE_MENU_RECT, MOVE_TEXT_RECT)
 
 
 # Phases du combat
@@ -52,13 +51,6 @@ class BattleState(State):
         self.flash_alpha = 0
         self.flash_timer = 0
 
-        self._font_action = None
-
-    @property
-    def font_action(self):
-        if self._font_action is None:
-            self._font_action = pygame.font.Font(None, 28)
-        return self._font_action
 
     def enter(self):
         """Initialise le combat avec les Pokemon selectionnes."""

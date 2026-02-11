@@ -48,9 +48,6 @@ RED = (208, 56, 56)
 GREEN = (56, 168, 56)
 YELLOW = (248, 208, 48)
 BLUE = (56, 88, 200)
-GRAY = (168, 168, 168)
-DARK_GRAY = (88, 88, 88)
-LIGHT_GRAY = (200, 200, 200)
 
 # Couleurs HP
 HP_GREEN = (0, 200, 0)
