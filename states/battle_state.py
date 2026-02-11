@@ -9,7 +9,7 @@ from ui.hp_bar import HPBar
 from ui.text_box import TextBox
 from ui.move_menu import MoveMenu
 from ui.sprite_loader import SpriteLoader
-from pokemon.config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, BG_LIGHT,
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, BG_LIGHT,
                     BORDER_COLOR, PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
                     PLAYER_INFO_POS, ENEMY_INFO_POS, TEXT_BOX_RECT,
                     MOVE_MENU_RECT, MOVE_TEXT_RECT, YELLOW)

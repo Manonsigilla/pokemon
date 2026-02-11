@@ -1,33 +1,56 @@
-"""Client API pour PokeAPI avec cache et construction de Pokemon."""
+"""Client API pour Pokemon - Lit d'abord la BDD locale (bdd/), puis PokeAPI en fallback."""
 
+import json
+import os
 import requests
 
-from pokemon.config import API_BASE_URL, SPRITE_URL_FRONT, SPRITE_URL_BACK, CACHE_DIR, DEFAULT_LEVEL
+from config import API_BASE_URL, SPRITE_URL_FRONT, SPRITE_URL_BACK, CACHE_DIR, DEFAULT_LEVEL, BASE_DIR
 from api.cache import Cache
 from models.move import Move
 from models.pokemon import Pokemon
 
 
 class APIClient:
-    """Recupere les donnees Pokemon depuis PokeAPI avec mise en cache."""
+    """Recupere les donnees Pokemon depuis la BDD locale ou PokeAPI avec mise en cache."""
 
     def __init__(self):
         self.base_url = API_BASE_URL
         self.cache = Cache(CACHE_DIR)
         self.session = requests.Session()
 
+        # Charger la BDD locale de Manon
+        self.local_pokemon_db = self._load_local_pokemon_db()
+
+    def _load_local_pokemon_db(self):
+        """Charge bdd/pokemon.json en memoire. Retourne un dict {id: pokemon_data}."""
+        db_path = os.path.join(BASE_DIR, "bdd", "pokemon.json")
+        if os.path.exists(db_path):
+            with open(db_path, "r", encoding="utf-8") as f:
+                pokemon_list = json.load(f)
+            # Indexer par ID pour acces rapide
+            return {p["id"]: p for p in pokemon_list}
+        print("ATTENTION: bdd/pokemon.json introuvable, fallback sur API")
+        return {}
+
     def fetch_pokemon_data(self, pokemon_id):
-        """Recupere les donnees brutes d'un Pokemon (cache puis API)."""
+        """Recupere les donnees brutes d'un Pokemon (BDD locale > cache > API)."""
+
+        # 1. Chercher dans la BDD locale de Manon
+        if pokemon_id in self.local_pokemon_db:
+            local = self.local_pokemon_db[pokemon_id]
+            return self._convert_local_to_format(local)
+
+        # 2. Chercher dans le cache
         cached = self.cache.get_json("pokemon", str(pokemon_id))
         if cached:
             return cached
 
+        # 3. Fallback: appeler l'API
         url = f"{self.base_url}/pokemon/{pokemon_id}"
         response = self.session.get(url, timeout=15)
         response.raise_for_status()
         data = response.json()
 
-        # Extraire les donnees utiles
         result = {
             "id": data["id"],
             "name": data["name"],
@@ -42,7 +65,6 @@ class APIClient:
 
         for move_entry in data["moves"]:
             move_name = move_entry["move"]["name"]
-            # Filtrer les moves appris par montee de niveau
             for version in move_entry["version_group_details"]:
                 if version["move_learn_method"]["name"] == "level-up":
                     level_learned = version["level_learned_at"]
@@ -55,8 +77,28 @@ class APIClient:
         self.cache.save_json("pokemon", str(pokemon_id), result)
         return result
 
+    def _convert_local_to_format(self, local_data):
+        """Convertit les donnees de bdd/pokemon.json au format attendu par le gameplay."""
+        return {
+            "id": local_data["id"],
+            "name": local_data["name"],
+            "types": local_data["types"],
+            "stats": {
+                "hp": local_data["stats"]["hp"],
+                "attack": local_data["stats"]["attack"],
+                "defense": local_data["stats"]["defense"],
+                "special-attack": local_data["stats"]["special-attack"],
+                "special-defense": local_data["stats"]["special-defense"],
+                "speed": local_data["stats"]["speed"],
+            },
+            "moves": [
+                {"name": move_name, "level": 1}
+                for move_name in local_data.get("moves", [])
+            ],
+        }
+
     def fetch_move_data(self, move_name):
-        """Recupere les donnees d'une attaque."""
+        """Recupere les donnees d'une attaque (cache puis API)."""
         cached = self.cache.get_json("moves", move_name)
         if cached:
             return cached
@@ -107,7 +149,7 @@ class APIClient:
         return path
 
     def build_pokemon(self, pokemon_id, level=DEFAULT_LEVEL):
-        """Construit un objet Pokemon complet depuis l'API."""
+        """Construit un objet Pokemon complet."""
         data = self.fetch_pokemon_data(pokemon_id)
         types = data["types"]
 
@@ -126,8 +168,8 @@ class APIClient:
                     pp=move_data["pp"],
                     move_type=move_data["type"],
                     category=move_data["category"],
-                    ailment=move_data["ailment"],
-                    ailment_chance=move_data["ailment_chance"],
+                    ailment=move_data.get("ailment"),
+                    ailment_chance=move_data.get("ailment_chance", 0),
                 )
                 moves.append(move)
             except Exception:
@@ -159,7 +201,7 @@ class APIClient:
         return pokemon
 
     def get_pokemon_preview(self, pokemon_id):
-        """Recupere les infos de base pour l'ecran de selection (nom, types, sprite)."""
+        """Recupere les infos de base pour l'ecran de selection."""
         data = self.fetch_pokemon_data(pokemon_id)
         front_sprite = self.download_sprite(pokemon_id, "front")
         return {
@@ -182,7 +224,7 @@ class APIClient:
         for move_entry in eligible:
             try:
                 data = self.fetch_move_data(move_entry["name"])
-                if data["power"] > 0:  # Prioriser les moves offensifs
+                if data["power"] > 0:
                     is_stab = data["type"] in pokemon_types
                     score = data["power"] * (1.5 if is_stab else 1.0)
                     move_details.append((move_entry["name"], data, score, is_stab))

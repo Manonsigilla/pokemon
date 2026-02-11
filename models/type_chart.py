@@ -1,17 +1,43 @@
-"""Table d'efficacite des types Pokemon."""
+"""Table d'efficacite des types Pokemon - Lit bdd/types.json de Manon."""
+
+import json
+import os
+
+from config import BASE_DIR
 
 
 class TypeChart:
-    """Gere les multiplicateurs d'efficacite entre types."""
+    """Gere les multiplicateurs d'efficacite entre types depuis bdd/types.json."""
 
     def __init__(self):
         self.chart = {}
         self._load_chart()
 
     def _load_chart(self):
-        """Charge la table de types hardcodee (18 types)."""
-        # Format : {type_attaquant: {type_defenseur: multiplicateur}}
-        # 2.0 = super efficace, 0.5 = pas tres efficace, 0.0 = aucun effet
+        """Charge la table de types depuis bdd/types.json (donnees de Manon)."""
+        types_path = os.path.join(BASE_DIR, "bdd", "types.json")
+
+        if os.path.exists(types_path):
+            with open(types_path, "r", encoding="utf-8") as f:
+                type_data = json.load(f)
+
+            # Convertir le format de bdd/types.json vers le format {attaquant: {defenseur: multiplicateur}}
+            for atk_type, relations in type_data.items():
+                self.chart[atk_type] = {}
+                for def_type in relations.get("double_damage_to", []):
+                    self.chart[atk_type][def_type] = 2.0
+                for def_type in relations.get("half_damage_to", []):
+                    self.chart[atk_type][def_type] = 0.5
+                for def_type in relations.get("no_damage_to", []):
+                    self.chart[atk_type][def_type] = 0.0
+
+            print(f"TypeChart: {len(self.chart)} types charges depuis bdd/types.json")
+        else:
+            print("ATTENTION: bdd/types.json introuvable, utilisation table par defaut")
+            self._load_fallback_chart()
+
+    def _load_fallback_chart(self):
+        """Table de secours hardcodee si le fichier JSON est absent."""
         self.chart = {
             "normal": {"rock": 0.5, "ghost": 0.0, "steel": 0.5},
             "fire": {"fire": 0.5, "water": 0.5, "grass": 2.0, "ice": 2.0,

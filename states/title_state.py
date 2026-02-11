@@ -4,7 +4,7 @@ import pygame
 
 from states.state import State
 from ui.button import Button
-from pokemon.config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BG_DARK, YELLOW, RED, BLUE)
 
 
