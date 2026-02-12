@@ -1,4 +1,4 @@
-"""Ecran de selection des Pokemon."""
+"""Ecran de selection des Pokemon - Style Pokedex avec flip."""
 
 import threading
 import pygame
@@ -11,7 +11,10 @@ from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
 
 
 class SelectionState(State):
-    """Ecran ou chaque joueur choisit son Pokemon."""
+    """Ecran ou chaque joueur choisit son Pokemon - Design Pokedex."""
+
+    POKEDEX_RED = (220, 50, 50)
+    POKEDEX_DARK = (35, 35, 40)
 
     def __init__(self, state_manager, api_client):
         super().__init__(state_manager)
@@ -19,12 +22,13 @@ class SelectionState(State):
         self.sprite_loader = SpriteLoader()
         self.cards = []
         self.current_player = 1
-        self.selected = {}  # {1: pokemon_id, 2: pokemon_id}
+        self.selected = {}
         self.loading = True
         self.loading_progress = 0
         self.loading_total = len(AVAILABLE_POKEMON_IDS)
         self.pokemon_previews = []
         self.scroll_offset = 0
+        self.max_scroll = 0
         self._font_title = None
         self._font_info = None
         self._font_loading = None
@@ -32,7 +36,7 @@ class SelectionState(State):
     @property
     def font_title(self):
         if self._font_title is None:
-            self._font_title = pygame.font.Font(None, 36)
+            self._font_title = pygame.font.Font(None, 40)
         return self._font_title
 
     @property
@@ -57,7 +61,6 @@ class SelectionState(State):
         self.cards = []
         self.scroll_offset = 0
 
-        # Charger en thread pour ne pas bloquer l'affichage
         thread = threading.Thread(target=self._load_pokemon_list, daemon=True)
         thread.start()
 
@@ -71,7 +74,6 @@ class SelectionState(State):
                 print(f"Erreur chargement Pokemon {pokemon_id}: {e}")
             self.loading_progress += 1
 
-        # Creer les cartes une fois tout charge
         self._build_cards()
         self.loading = False
 
@@ -80,10 +82,10 @@ class SelectionState(State):
         self.cards = []
         cols = 5
         card_width = 140
-        card_height = 160
-        margin = 10
+        card_height = 170
+        margin = 12
         start_x = (SCREEN_WIDTH - (cols * (card_width + margin) - margin)) // 2
-        start_y = 80
+        start_y = 90
 
         for i, preview in enumerate(self.pokemon_previews):
             col = i % cols
@@ -91,18 +93,23 @@ class SelectionState(State):
             x = start_x + col * (card_width + margin)
             y = start_y + row * (card_height + margin)
 
-            # Charger le sprite en petit pour la carte
             try:
                 sprite = self.sprite_loader.load_sprite_small(preview["sprite_path"])
             except Exception:
                 sprite = None
 
+            # Passer les stats à la carte pour l'affichage au dos
             card = PokemonCard(
                 x, y, card_width, card_height,
                 preview["id"], preview["name"],
-                preview["types"], sprite
+                preview["types"], sprite,
+                preview.get("stats", {})  # <- Les stats pour le flip !
             )
             self.cards.append(card)
+
+        if self.cards:
+            last_card = self.cards[-1]
+            self.max_scroll = max(0, last_card.rect.bottom - SCREEN_HEIGHT + 50)
 
     def handle_events(self, events):
         """Gere la selection par clic."""
@@ -122,24 +129,20 @@ class SelectionState(State):
                         self._select_pokemon(card.pokemon_id)
                         break
 
-            # Scroll
             if event.type == pygame.MOUSEWHEEL:
-                self.scroll_offset -= event.y * 30
-                self.scroll_offset = max(0, self.scroll_offset)
+                self.scroll_offset -= event.y * 35
+                self.scroll_offset = max(0, min(self.scroll_offset, self.max_scroll))
 
-            # Echap pour revenir au menu
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.state_manager.change_state("title")
 
     def _select_pokemon(self, pokemon_id):
         """Enregistre la selection d'un joueur."""
-        # Empecher de choisir le meme Pokemon
         if 1 in self.selected and self.selected[1] == pokemon_id and self.current_player == 2:
             return
 
         self.selected[self.current_player] = pokemon_id
 
-        # Marquer la carte comme selectionnee
         for card in self.cards:
             if card.pokemon_id == pokemon_id:
                 card.is_selected = True
@@ -148,7 +151,6 @@ class SelectionState(State):
 
         if self.current_player == 1:
             if mode == "pvia":
-                # L'IA choisit aleatoirement
                 import random
                 available = [pid for pid in AVAILABLE_POKEMON_IDS if pid != pokemon_id]
                 ai_choice = random.choice(available)
@@ -181,49 +183,68 @@ class SelectionState(State):
         thread.start()
 
     def update(self, dt):
-        """Verifie si le combat est pret a demarrer."""
+        """Met a jour les animations des cartes."""
         if self.state_manager.shared_data.get("start_battle"):
             self.state_manager.shared_data["start_battle"] = False
             self.state_manager.change_state("battle")
 
+        # IMPORTANT: Mettre à jour l'animation flip de chaque carte
+        for card in self.cards:
+            card.update(dt)
+
     def draw(self, surface):
-        """Dessine l'ecran de selection."""
-        surface.fill(BG_DARK)
+        """Dessine l'ecran de selection style Pokedex."""
+        surface.fill(self.POKEDEX_DARK)
+        
+        # Bandeau rouge
+        pygame.draw.rect(surface, self.POKEDEX_RED, (0, 0, SCREEN_WIDTH, 70))
+        pygame.draw.rect(surface, (180, 40, 40), (0, 65, SCREEN_WIDTH, 5))
 
         if self.loading:
             self._draw_loading(surface)
             return
 
         # Titre
-        mode = self.state_manager.shared_data.get("mode", "pvp")
         if self.current_player == 1:
             title_text = "Joueur 1 - Choisissez votre Pokemon !"
         else:
             title_text = "Joueur 2 - Choisissez votre Pokemon !"
 
+        title_shadow = self.font_title.render(title_text, True, (0, 0, 0))
         title = self.font_title.render(title_text, True, YELLOW)
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
+        surface.blit(title_shadow, (title_x + 2, 22))
         surface.blit(title, (title_x, 20))
 
-        # Cartes Pokemon (avec scroll)
+        # Cartes Pokemon
         for card in self.cards:
-            # Ajuster la position avec le scroll
             draw_rect = card.rect.copy()
             draw_rect.y -= self.scroll_offset
 
-            # Ne dessiner que si visible
-            if draw_rect.bottom > 60 and draw_rect.top < SCREEN_HEIGHT:
-                # Temporairement deplacer pour le dessin
+            if draw_rect.bottom > 70 and draw_rect.top < SCREEN_HEIGHT - 40:
                 original_rect = card.rect
                 card.rect = draw_rect
                 card.draw(surface)
                 card.rect = original_rect
 
-        # Instructions
+        # Barre d'instructions
+        info_bar = pygame.Surface((SCREEN_WIDTH, 40), pygame.SRCALPHA)
+        info_bar.fill((0, 0, 0, 180))
+        surface.blit(info_bar, (0, SCREEN_HEIGHT - 40))
+
         hint = self.font_info.render(
-            "Cliquez pour selectionner | Echap = retour", True, (150, 150, 150)
+            "Cliquez pour selectionner | Survolez pour les stats | Echap = retour", True, WHITE
         )
-        surface.blit(hint, (20, SCREEN_HEIGHT - 30))
+        hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
+        surface.blit(hint, (hint_x, SCREEN_HEIGHT - 32))
+
+        # Scrollbar
+        if self.max_scroll > 0:
+            scroll_percent = self.scroll_offset / self.max_scroll
+            scrollbar_height = 80
+            scrollbar_y = 75 + int((SCREEN_HEIGHT - 130 - scrollbar_height) * scroll_percent)
+            pygame.draw.rect(surface, (80, 80, 80), (SCREEN_WIDTH - 12, 75, 8, SCREEN_HEIGHT - 130), border_radius=4)
+            pygame.draw.rect(surface, YELLOW, (SCREEN_WIDTH - 12, scrollbar_y, 8, scrollbar_height), border_radius=4)
 
     def _draw_loading(self, surface):
         """Dessine l'ecran de chargement."""
@@ -231,26 +252,21 @@ class SelectionState(State):
         text_x = (SCREEN_WIDTH - text.get_width()) // 2
         surface.blit(text, (text_x, SCREEN_HEIGHT // 2 - 40))
 
-        # Barre de progression
         bar_width = 400
-        bar_height = 20
+        bar_height = 24
         bar_x = (SCREEN_WIDTH - bar_width) // 2
         bar_y = SCREEN_HEIGHT // 2 + 10
 
-        # Fond
-        pygame.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height))
+        pygame.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height), border_radius=12)
 
-        # Remplissage
         if self.loading_total > 0:
             fill = int(bar_width * self.loading_progress / self.loading_total)
-            pygame.draw.rect(surface, YELLOW, (bar_x, bar_y, fill, bar_height))
+            pygame.draw.rect(surface, self.POKEDEX_RED, (bar_x, bar_y, fill, bar_height), border_radius=12)
 
-        # Bordure
-        pygame.draw.rect(surface, WHITE, (bar_x, bar_y, bar_width, bar_height), 2)
+        pygame.draw.rect(surface, WHITE, (bar_x, bar_y, bar_width, bar_height), 2, border_radius=12)
 
-        # Texte progression
         progress_text = self.font_info.render(
             f"{self.loading_progress}/{self.loading_total}", True, WHITE
         )
         progress_x = (SCREEN_WIDTH - progress_text.get_width()) // 2
-        surface.blit(progress_text, (progress_x, bar_y + 30))
+        surface.blit(progress_text, (progress_x, bar_y + 35))
