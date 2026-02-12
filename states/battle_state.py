@@ -1,6 +1,7 @@
 """Ecran de combat Pokemon style GBA."""
 
 import pygame
+import os
 
 from states.state import State
 from battle.battle import Battle
@@ -11,7 +12,7 @@ from ui.move_menu import MoveMenu
 from ui.sprite_loader import SpriteLoader
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
                     PLAYER_INFO_POS, ENEMY_INFO_POS, TEXT_BOX_RECT,
-                    MOVE_MENU_RECT, MOVE_TEXT_RECT)
+                    MOVE_MENU_RECT, MOVE_TEXT_RECT, BASE_DIR)
 
 
 # Phases du combat
@@ -31,6 +32,8 @@ class BattleState(State):
         self.battle = None
         self.ai = None
         self.sprite_loader = SpriteLoader()
+
+        self.background_image = None
 
         self.phase = PHASE_INTRO
         self.hp_bar_p1 = None
@@ -57,6 +60,19 @@ class BattleState(State):
         pokemon1 = self.state_manager.shared_data["pokemon1"]
         pokemon2 = self.state_manager.shared_data["pokemon2"]
         mode = self.state_manager.shared_data.get("mode", "pvp")
+
+# Add this - load background image
+        try:
+            bg_path = os.path.join(BASE_DIR, "assets", "backgrounds", "battle_bg.png")
+            self.background_image = pygame.image.load(bg_path).convert()
+            # Scale to screen size
+            self.background_image = pygame.transform.scale(
+                self.background_image, 
+                (SCREEN_WIDTH, SCREEN_HEIGHT)
+            )
+        except Exception as e:
+            print(f"Could not load background image: {e}")
+            self.background_image = None
 
         # Creer le combat
         self.battle = Battle(pokemon1, pokemon2, self.type_chart)
@@ -271,29 +287,14 @@ class BattleState(State):
             surface.blit(flash_surface, (0, 0))
 
     def _draw_background(self, surface):
-        """Dessine le fond de l'arene style GBA."""
-        # Ciel
-        surface.fill((136, 192, 240))
-
-        # Sol (plateforme adverse)
-        pygame.draw.ellipse(
-            surface, (144, 200, 120),
-            (420, 230, 320, 60)
-        )
-        pygame.draw.ellipse(
-            surface, (120, 176, 100),
-            (420, 230, 320, 60), 2
-        )
-
-        # Sol (plateforme joueur)
-        pygame.draw.ellipse(
-            surface, (144, 200, 120),
-            (20, 420, 350, 70)
-        )
-        pygame.draw.ellipse(
-            surface, (120, 176, 100),
-            (20, 420, 350, 70), 2
-        )
-
-        # Ligne de sol
-        pygame.draw.rect(surface, (120, 176, 100), (0, 430, SCREEN_WIDTH, 170))
+        """Dessine le fond de l'arene."""
+        if self.background_image:
+            surface.blit(self.background_image, (0, 0))
+        else:
+            # Fallback to original drawing if image not found
+            surface.fill((136, 192, 240))
+            pygame.draw.ellipse(surface, (144, 200, 120), (420, 230, 320, 60))
+            pygame.draw.ellipse(surface, (120, 176, 100), (420, 230, 320, 60), 2)
+            pygame.draw.ellipse(surface, (144, 200, 120), (20, 420, 350, 70))
+            pygame.draw.ellipse(surface, (120, 176, 100), (20, 420, 350, 70), 2)
+            pygame.draw.rect(surface, (120, 176, 100), (0, 430, SCREEN_WIDTH, 170))

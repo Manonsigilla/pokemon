@@ -8,7 +8,7 @@ from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
                     YELLOW, AVAILABLE_POKEMON_IDS)
-
+from config import GAME_FONT
 
 class SelectionState(State):
     """Ecran ou chaque joueur choisit son Pokemon."""
@@ -32,19 +32,19 @@ class SelectionState(State):
     @property
     def font_title(self):
         if self._font_title is None:
-            self._font_title = pygame.font.Font(None, 36)
+            self._font_title = pygame.font.Font(GAME_FONT, 25)
         return self._font_title
 
     @property
     def font_info(self):
         if self._font_info is None:
-            self._font_info = pygame.font.Font(None, 24)
+            self._font_info = pygame.font.Font(GAME_FONT, 20)
         return self._font_info
 
     @property
     def font_loading(self):
         if self._font_loading is None:
-            self._font_loading = pygame.font.Font(None, 32)
+            self._font_loading = pygame.font.Font(GAME_FONT, 29)
         return self._font_loading
 
     def enter(self):

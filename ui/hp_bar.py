@@ -4,7 +4,7 @@ import pygame
 
 from config import (BLACK, WHITE, HP_GREEN, HP_YELLOW, HP_RED,
                     BORDER_COLOR, BG_LIGHT)
-
+from config import GAME_FONT
 
 class HPBar:
     """Barre de vie animee avec nom du Pokemon et niveau."""
@@ -27,13 +27,13 @@ class HPBar:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(None, 28)
+            self._font_name = pygame.font.Font(GAME_FONT, 25)
         return self._font_name
 
     @property
     def font_hp(self):
         if self._font_hp is None:
-            self._font_hp = pygame.font.Font(None, 22)
+            self._font_hp = pygame.font.Font(GAME_FONT, 19)
         return self._font_hp
 
     def update(self, dt):

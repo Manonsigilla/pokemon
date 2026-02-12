@@ -3,7 +3,7 @@
 import pygame
 
 from config import BLACK, WHITE, DARK_GRAY, LIGHT_GRAY, BORDER_COLOR
-
+from config import GAME_FONT
 
 class Button:
     """Bouton cliquable avec texte centre."""
@@ -18,7 +18,7 @@ class Button:
     @property
     def font(self):
         if self._font is None:
-            self._font = pygame.font.Font(None, self.font_size)
+            self._font = pygame.font.Font(GAME_FONT, self.font_size)
         return self._font
 
     def check_hover(self, mouse_pos):

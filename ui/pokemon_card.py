@@ -4,7 +4,7 @@ import pygame
 
 from config import (BLACK, WHITE, BORDER_COLOR, TYPE_COLORS,
                     LIGHT_GRAY, BG_LIGHT)
-
+from config import GAME_FONT
 
 class PokemonCard:
     """Carte cliquable affichant un Pokemon pour la selection."""
@@ -23,13 +23,13 @@ class PokemonCard:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(None, 22)
+            self._font_name = pygame.font.Font(GAME_FONT, 18)
         return self._font_name
 
     @property
     def font_type(self):
         if self._font_type is None:
-            self._font_type = pygame.font.Font(None, 16)
+            self._font_type = pygame.font.Font(GAME_FONT, 13)
         return self._font_type
 
     def check_hover(self, mouse_pos):

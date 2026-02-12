@@ -13,6 +13,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
+GAME_FONT = os.path.join(FONTS_DIR, "PKMN_RBYGSC.ttf")
 
 # --- API ---
 API_BASE_URL = "https://pokeapi.co/api/v2"
