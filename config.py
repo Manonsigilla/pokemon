@@ -39,9 +39,9 @@ DARK_GRAY = (88, 88, 88)
 LIGHT_GRAY = (200, 200, 200)
 
 # Couleurs HP
-HP_GREEN = (0, 200, 0)
-HP_YELLOW = (255, 200, 0)
-HP_RED = (200, 0, 0)
+HP_GREEN = (56, 168, 56)
+HP_YELLOW = (248, 208, 48)
+HP_RED = (208, 56, 56)
 
 # Style GBA
 BG_LIGHT = (248, 248, 216)

@@ -1,17 +1,22 @@
-"""Ecran de selection des Pokemon - Style Pokedex avec flip."""
+"""Ecran de selection des Pokemon - Style Pokedex avec selection multi-Pokemon."""
 
 import threading
+import random
 import pygame
 
 from states.state import State
+from models.player import Player
 from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
                     YELLOW, AVAILABLE_POKEMON_IDS)
 
 
+MAX_TEAM_SIZE = 6  # Nombre max de Pokemon par equipe
+
+
 class SelectionState(State):
-    """Ecran ou chaque joueur choisit son Pokemon - Design Pokedex."""
+    """Ecran ou chaque joueur choisit son equipe - Design Pokedex."""
 
     POKEDEX_RED = (220, 50, 50)
     POKEDEX_DARK = (35, 35, 40)
@@ -22,7 +27,8 @@ class SelectionState(State):
         self.sprite_loader = SpriteLoader()
         self.cards = []
         self.current_player = 1
-        self.selected = {}
+        # Changement : listes d'IDs au lieu d'un seul ID
+        self.selected = {1: [], 2: []}
         self.loading = True
         self.loading_progress = 0
         self.loading_total = len(AVAILABLE_POKEMON_IDS)
@@ -32,6 +38,7 @@ class SelectionState(State):
         self._font_title = None
         self._font_info = None
         self._font_loading = None
+        self._font_counter = None
 
     @property
     def font_title(self):
@@ -51,10 +58,16 @@ class SelectionState(State):
             self._font_loading = pygame.font.Font(None, 32)
         return self._font_loading
 
+    @property
+    def font_counter(self):
+        if self._font_counter is None:
+            self._font_counter = pygame.font.Font(None, 28)
+        return self._font_counter
+
     def enter(self):
         """Lance le chargement des Pokemon."""
         self.current_player = 1
-        self.selected = {}
+        self.selected = {1: [], 2: []}
         self.loading = True
         self.loading_progress = 0
         self.pokemon_previews = []
@@ -98,12 +111,11 @@ class SelectionState(State):
             except Exception:
                 sprite = None
 
-            # Passer les stats à la carte pour l'affichage au dos
             card = PokemonCard(
                 x, y, card_width, card_height,
                 preview["id"], preview["name"],
                 preview["types"], sprite,
-                preview.get("stats", {})  # <- Les stats pour le flip !
+                preview.get("stats", {})
             )
             self.cards.append(card)
 
@@ -133,50 +145,101 @@ class SelectionState(State):
                 self.scroll_offset -= event.y * 35
                 self.scroll_offset = max(0, min(self.scroll_offset, self.max_scroll))
 
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.state_manager.change_state("title")
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.state_manager.change_state("title")
+                elif event.key == pygame.K_RETURN:
+                    # Valider l'equipe avec Entree
+                    self._confirm_team()
 
     def _select_pokemon(self, pokemon_id):
-        """Enregistre la selection d'un joueur."""
-        if 1 in self.selected and self.selected[1] == pokemon_id and self.current_player == 2:
+        """Ajoute ou retire un Pokemon de l'equipe du joueur courant."""
+        current_list = self.selected[self.current_player]
+
+        # Si deja selectionne par ce joueur, le deselectionner
+        if pokemon_id in current_list:
+            current_list.remove(pokemon_id)
+            for card in self.cards:
+                if card.pokemon_id == pokemon_id:
+                    card.is_selected = False
             return
 
-        self.selected[self.current_player] = pokemon_id
+        # Verifier la limite de 6
+        if len(current_list) >= MAX_TEAM_SIZE:
+            return
 
+        # En PvP, le joueur 2 ne peut pas prendre les memes que le joueur 1
+        # (optionnel : decommenter si vous voulez cette regle)
+        # if self.current_player == 2 and pokemon_id in self.selected[1]:
+        #     return
+
+        current_list.append(pokemon_id)
         for card in self.cards:
             if card.pokemon_id == pokemon_id:
                 card.is_selected = True
+
+    def _confirm_team(self):
+        """Valide l'equipe actuelle et passe a la suite."""
+        current_list = self.selected[self.current_player]
+
+        # Il faut au moins 1 Pokemon
+        if len(current_list) == 0:
+            return
 
         mode = self.state_manager.shared_data.get("mode", "pvp")
 
         if self.current_player == 1:
             if mode == "pvia":
-                import random
-                available = [pid for pid in AVAILABLE_POKEMON_IDS if pid != pokemon_id]
-                ai_choice = random.choice(available)
-                self.selected[2] = ai_choice
+                # L'IA choisit une equipe aleatoire de meme taille
+                ai_team_size = len(current_list)
+                available = [pid for pid in AVAILABLE_POKEMON_IDS
+                            if pid not in current_list]
+                ai_team = random.sample(available, min(ai_team_size, len(available)))
+                self.selected[2] = ai_team
                 for card in self.cards:
-                    if card.pokemon_id == ai_choice:
+                    if card.pokemon_id in ai_team:
                         card.is_selected = True
                 self._start_battle()
             else:
+                # Deselectionner visuellement pour le joueur 2
+                for card in self.cards:
+                    if card.pokemon_id not in self.selected[1]:
+                        card.is_selected = False
                 self.current_player = 2
         else:
             self._start_battle()
 
     def _start_battle(self):
-        """Construit les Pokemon complets et lance le combat."""
+        """Construit les Players avec leurs equipes et lance le combat."""
         self.loading = True
 
         def build_and_start():
             try:
-                p1 = self.api_client.build_pokemon(self.selected[1])
-                p2 = self.api_client.build_pokemon(self.selected[2])
-                self.state_manager.shared_data["pokemon1"] = p1
-                self.state_manager.shared_data["pokemon2"] = p2
+                mode = self.state_manager.shared_data.get("mode", "pvp")
+
+                # Construire le Player 1
+                player1 = Player("Joueur 1")
+                for pid in self.selected[1]:
+                    pokemon = self.api_client.build_pokemon(pid)
+                    player1.add_pokemon(pokemon)
+
+                # Construire le Player 2
+                if mode == "pvia":
+                    player2 = Player("Champion", is_ai=True)
+                else:
+                    player2 = Player("Joueur 2")
+                for pid in self.selected[2]:
+                    pokemon = self.api_client.build_pokemon(pid)
+                    player2.add_pokemon(pokemon)
+
+                # Passer les Players via shared_data
+                self.state_manager.shared_data["player1"] = player1
+                self.state_manager.shared_data["player2"] = player2
                 self.state_manager.shared_data["start_battle"] = True
             except Exception as e:
-                print(f"Erreur construction Pokemon: {e}")
+                print(f"Erreur construction equipe: {e}")
+                import traceback
+                traceback.print_exc()
                 self.loading = False
 
         thread = threading.Thread(target=build_and_start, daemon=True)
@@ -188,14 +251,13 @@ class SelectionState(State):
             self.state_manager.shared_data["start_battle"] = False
             self.state_manager.change_state("battle")
 
-        # IMPORTANT: Mettre à jour l'animation flip de chaque carte
         for card in self.cards:
             card.update(dt)
 
     def draw(self, surface):
         """Dessine l'ecran de selection style Pokedex."""
         surface.fill(self.POKEDEX_DARK)
-        
+
         # Bandeau rouge
         pygame.draw.rect(surface, self.POKEDEX_RED, (0, 0, SCREEN_WIDTH, 70))
         pygame.draw.rect(surface, (180, 40, 40), (0, 65, SCREEN_WIDTH, 5))
@@ -204,11 +266,14 @@ class SelectionState(State):
             self._draw_loading(surface)
             return
 
-        # Titre
+        # Titre avec compteur
+        current_list = self.selected[self.current_player]
+        count = len(current_list)
+
         if self.current_player == 1:
-            title_text = "Joueur 1 - Choisissez votre Pokemon !"
+            title_text = f"Joueur 1 - Choisissez votre equipe ! ({count}/{MAX_TEAM_SIZE})"
         else:
-            title_text = "Joueur 2 - Choisissez votre Pokemon !"
+            title_text = f"Joueur 2 - Choisissez votre equipe ! ({count}/{MAX_TEAM_SIZE})"
 
         title_shadow = self.font_title.render(title_text, True, (0, 0, 0))
         title = self.font_title.render(title_text, True, YELLOW)
@@ -232,9 +297,12 @@ class SelectionState(State):
         info_bar.fill((0, 0, 0, 180))
         surface.blit(info_bar, (0, SCREEN_HEIGHT - 40))
 
-        hint = self.font_info.render(
-            "Cliquez pour selectionner | Survolez pour les stats | Echap = retour", True, WHITE
-        )
+        if count > 0:
+            hint_text = f"Cliquez pour ajouter/retirer | Entree = Valider ({count} Pokemon) | Echap = retour"
+        else:
+            hint_text = "Cliquez pour selectionner | Survolez pour les stats | Echap = retour"
+
+        hint = self.font_info.render(hint_text, True, WHITE)
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, SCREEN_HEIGHT - 32))
 
