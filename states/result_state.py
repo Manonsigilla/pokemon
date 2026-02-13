@@ -4,9 +4,9 @@ import pygame
 
 from states.state import State
 from ui.sprite_loader import SpriteLoader
-from config import (SCREEN_WIDTH, WHITE,
-                    BG_DARK, YELLOW, GREEN)
-from config import GAME_FONT
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE,
+                    BG_DARK, YELLOW, GREEN, get_font)
+
 
 class ResultState(State):
     """Affiche le resultat du combat avec le Pokemon gagnant."""
@@ -17,18 +17,25 @@ class ResultState(State):
         self.winner = None
         self.winner_sprite = None
         self._font_title = None
+        self._font_name = None
         self._font_info = None
 
     @property
     def font_title(self):
         if self._font_title is None:
-            self._font_title = pygame.font.Font(GAME_FONT, 44)
+            self._font_title = get_font(28)
         return self._font_title
+
+    @property
+    def font_name(self):
+        if self._font_name is None:
+            self._font_name = get_font(18)
+        return self._font_name
 
     @property
     def font_info(self):
         if self._font_info is None:
-            self._font_info = pygame.font.Font(GAME_FONT, 23)
+            self._font_info = get_font(14)
         return self._font_info
 
     def enter(self):
@@ -72,11 +79,11 @@ class ResultState(State):
             sprite_y = 120
             surface.blit(self.winner_sprite, (sprite_x, sprite_y))
 
-        # Nom du gagnant
-        name_text = self.font_title.render(
+        # Nom du gagnant - utiliser une font plus petite pour que ca rentre
+        name_text = self.font_name.render(
             f"{self.winner.name} remporte le combat !", True, GREEN
         )
-        name_x = (SCREEN_WIDTH - name_text.get_width()) // 2
+        name_x = max(10, (SCREEN_WIDTH - name_text.get_width()) // 2)
         surface.blit(name_text, (name_x, 430))
 
         # PV restants
@@ -85,10 +92,10 @@ class ResultState(State):
             True, WHITE
         )
         hp_x = (SCREEN_WIDTH - hp_text.get_width()) // 2
-        surface.blit(hp_text, (hp_x, 480))
+        surface.blit(hp_text, (hp_x, 475))
 
         # Instructions
-        hint1 = self.font_info.render("Entree = Rejouer", True, (150, 150, 150))
-        hint2 = self.font_info.render("Echap = Quitter", True, (150, 150, 150))
-        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, 530))
-        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, 560))
+        hint1 = self.font_info.render("Entree = Rejouer", True, (180, 180, 180))
+        hint2 = self.font_info.render("Echap = Quitter", True, (180, 180, 180))
+        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, 520))
+        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, 550))

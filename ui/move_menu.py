@@ -3,8 +3,8 @@
 import pygame
 
 from config import (BLACK, WHITE, BORDER_COLOR, MENU_BG,
-                    TYPE_COLORS, DARK_GRAY, LIGHT_GRAY)
-from config import GAME_FONT
+                    TYPE_COLORS, DARK_GRAY, LIGHT_GRAY, get_font)
+
 
 class MoveMenu:
     """Grille 2x2 pour la selection des attaques."""
@@ -20,13 +20,13 @@ class MoveMenu:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(GAME_FONT, 20)
+            self._font_name = get_font(12)
         return self._font_name
 
     @property
     def font_info(self):
         if self._font_info is None:
-            self._font_info = pygame.font.Font(GAME_FONT, 15)
+            self._font_info = get_font(10)
         return self._font_info
 
     def navigate(self, direction):
@@ -75,9 +75,7 @@ class MoveMenu:
 
             # Fond de la cellule
             if i == self.selected_index:
-                # Cellule selectionnee : couleur du type
                 type_color = TYPE_COLORS.get(move.move_type, LIGHT_GRAY)
-                # Eclaircir la couleur
                 highlight = tuple(min(255, c + 80) for c in type_color)
                 pygame.draw.rect(surface, highlight, cell_rect)
             else:
@@ -89,7 +87,7 @@ class MoveMenu:
             # Nom de l'attaque
             name_color = BLACK if move.has_pp() else DARK_GRAY
             name_surface = self.font_name.render(move.display_name, True, name_color)
-            surface.blit(name_surface, (cell_x + 8, cell_y + 10))
+            surface.blit(name_surface, (cell_x + 8, cell_y + 8))
 
             # Type et PP
             type_text = move.move_type.title()
@@ -98,5 +96,5 @@ class MoveMenu:
             type_surface = self.font_info.render(type_text, True, DARK_GRAY)
             pp_surface = self.font_info.render(pp_text, True, DARK_GRAY)
 
-            surface.blit(type_surface, (cell_x + 8, cell_y + 35))
-            surface.blit(pp_surface, (cell_x + 8, cell_y + 55))
+            surface.blit(type_surface, (cell_x + 8, cell_y + 28))
+            surface.blit(pp_surface, (cell_x + 8, cell_y + 42))

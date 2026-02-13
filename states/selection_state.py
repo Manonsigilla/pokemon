@@ -12,6 +12,7 @@ from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
                     YELLOW, AVAILABLE_POKEMON_IDS)
 from config import GAME_FONT
 
+
 MAX_TEAM_SIZE = 6  # Nombre max de Pokemon par equipe
 
 
@@ -27,7 +28,7 @@ class SelectionState(State):
         self.sprite_loader = SpriteLoader()
         self.cards = []
         self.current_player = 1
-        # Changement : listes d'IDs au lieu d'un seul ID
+        # Changement Manon : listes d'IDs au lieu d'un seul ID
         self.selected = {1: [], 2: []}
         self.loading = True
         self.loading_progress = 0
@@ -111,11 +112,12 @@ class SelectionState(State):
             except Exception:
                 sprite = None
 
+            # Angie : Passer les stats a la carte pour l'affichage au dos (flip)
             card = PokemonCard(
                 x, y, card_width, card_height,
                 preview["id"], preview["name"],
                 preview["types"], sprite,
-                preview.get("stats", {})
+                preview.get("stats", {})  # <- Les stats pour le flip !
             )
             self.cards.append(card)
 
@@ -149,11 +151,11 @@ class SelectionState(State):
                 if event.key == pygame.K_ESCAPE:
                     self.state_manager.change_state("title")
                 elif event.key == pygame.K_RETURN:
-                    # Valider l'equipe avec Entree
+                    # Manon : Valider l'equipe avec Entree
                     self._confirm_team()
 
     def _select_pokemon(self, pokemon_id):
-        """Ajoute ou retire un Pokemon de l'equipe du joueur courant."""
+        """Manon : Ajoute ou retire un Pokemon de l'equipe du joueur courant."""
         current_list = self.selected[self.current_player]
 
         # Si deja selectionne par ce joueur, le deselectionner
@@ -168,18 +170,13 @@ class SelectionState(State):
         if len(current_list) >= MAX_TEAM_SIZE:
             return
 
-        # En PvP, le joueur 2 ne peut pas prendre les memes que le joueur 1
-        # (optionnel : decommenter si vous voulez cette regle)
-        # if self.current_player == 2 and pokemon_id in self.selected[1]:
-        #     return
-
         current_list.append(pokemon_id)
         for card in self.cards:
             if card.pokemon_id == pokemon_id:
                 card.is_selected = True
 
     def _confirm_team(self):
-        """Valide l'equipe actuelle et passe a la suite."""
+        """Manon : Valide l'equipe actuelle et passe a la suite."""
         current_list = self.selected[self.current_player]
 
         # Il faut au moins 1 Pokemon
@@ -210,7 +207,7 @@ class SelectionState(State):
             self._start_battle()
 
     def _start_battle(self):
-        """Construit les Players avec leurs equipes et lance le combat."""
+        """Manon : Construit les Players avec leurs equipes et lance le combat."""
         self.loading = True
 
         def build_and_start():
@@ -251,14 +248,15 @@ class SelectionState(State):
             self.state_manager.shared_data["start_battle"] = False
             self.state_manager.change_state("battle")
 
+        # Angie : Mettre a jour l'animation flip de chaque carte
         for card in self.cards:
             card.update(dt)
 
     def draw(self, surface):
-        """Dessine l'ecran de selection style Pokedex."""
+        """Dessine l'ecran de selection style Pokedex (Angie)."""
         surface.fill(self.POKEDEX_DARK)
 
-        # Bandeau rouge
+        # Bandeau rouge (Angie)
         pygame.draw.rect(surface, self.POKEDEX_RED, (0, 0, SCREEN_WIDTH, 70))
         pygame.draw.rect(surface, (180, 40, 40), (0, 65, SCREEN_WIDTH, 5))
 
@@ -266,7 +264,7 @@ class SelectionState(State):
             self._draw_loading(surface)
             return
 
-        # Titre avec compteur
+        # Titre avec compteur (Manon : compteur equipe)
         current_list = self.selected[self.current_player]
         count = len(current_list)
 
@@ -275,13 +273,14 @@ class SelectionState(State):
         else:
             title_text = f"Joueur 2 - Choisissez votre equipe ! ({count}/{MAX_TEAM_SIZE})"
 
+        # Angie : ombre sur le titre
         title_shadow = self.font_title.render(title_text, True, (0, 0, 0))
         title = self.font_title.render(title_text, True, YELLOW)
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         surface.blit(title_shadow, (title_x + 2, 22))
         surface.blit(title, (title_x, 20))
 
-        # Cartes Pokemon
+        # Cartes Pokemon (avec scroll)
         for card in self.cards:
             draw_rect = card.rect.copy()
             draw_rect.y -= self.scroll_offset
@@ -292,11 +291,12 @@ class SelectionState(State):
                 card.draw(surface)
                 card.rect = original_rect
 
-        # Barre d'instructions
+        # Barre d'instructions (Angie : semi-transparente)
         info_bar = pygame.Surface((SCREEN_WIDTH, 40), pygame.SRCALPHA)
         info_bar.fill((0, 0, 0, 180))
         surface.blit(info_bar, (0, SCREEN_HEIGHT - 40))
 
+        # Manon : instructions adaptees au mode multi-Pokemon
         if count > 0:
             hint_text = f"Cliquez pour ajouter/retirer | Entree = Valider ({count} Pokemon) | Echap = retour"
         else:
@@ -306,7 +306,7 @@ class SelectionState(State):
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, SCREEN_HEIGHT - 32))
 
-        # Scrollbar
+        # Scrollbar (Angie)
         if self.max_scroll > 0:
             scroll_percent = self.scroll_offset / self.max_scroll
             scrollbar_height = 80
@@ -315,7 +315,7 @@ class SelectionState(State):
             pygame.draw.rect(surface, YELLOW, (SCREEN_WIDTH - 12, scrollbar_y, 8, scrollbar_height), border_radius=4)
 
     def _draw_loading(self, surface):
-        """Dessine l'ecran de chargement."""
+        """Dessine l'ecran de chargement (Angie : style Pokedex)."""
         text = self.font_loading.render("Chargement des Pokemon...", True, WHITE)
         text_x = (SCREEN_WIDTH - text.get_width()) // 2
         surface.blit(text, (text_x, SCREEN_HEIGHT // 2 - 40))
@@ -325,14 +325,18 @@ class SelectionState(State):
         bar_x = (SCREEN_WIDTH - bar_width) // 2
         bar_y = SCREEN_HEIGHT // 2 + 10
 
+        # Fond arrondi
         pygame.draw.rect(surface, (60, 60, 60), (bar_x, bar_y, bar_width, bar_height), border_radius=12)
 
+        # Remplissage rouge Pokedex
         if self.loading_total > 0:
             fill = int(bar_width * self.loading_progress / self.loading_total)
             pygame.draw.rect(surface, self.POKEDEX_RED, (bar_x, bar_y, fill, bar_height), border_radius=12)
 
+        # Bordure
         pygame.draw.rect(surface, WHITE, (bar_x, bar_y, bar_width, bar_height), 2, border_radius=12)
 
+        # Texte progression
         progress_text = self.font_info.render(
             f"{self.loading_progress}/{self.loading_total}", True, WHITE
         )

@@ -147,23 +147,41 @@ class Battle:
             return 2
         return None
 
+    def _determine_order(self, p1, move1, p2, move2):
+        """Determine qui attaque en premier selon la vitesse."""
+        speed1 = p1.get_effective_speed()
+        speed2 = p2.get_effective_speed()
+
+        if speed1 > speed2:
+            return p1, move1, p2, move2
+        elif speed2 > speed1:
+            return p2, move2, p1, move1
+        else:
+            if random.random() < 0.5:
+                return p1, move1, p2, move2
+            return p2, move2, p1, move1
+
     def _process_turn(self, attacker, defender, move):
         """Traite le tour d'un Pokemon : statut, attaque, degats."""
         messages = []
 
+        # Verifier le statut en debut de tour
         can_move, status_msg = self._process_status_start(attacker)
         if status_msg:
             messages.append(status_msg)
         if not can_move:
             return messages
 
+        # Utiliser le move
         messages.append(f"{attacker.name} utilise {move.display_name} !")
         move.use()
 
+        # Verifier la precision
         if not self._check_accuracy(move):
             messages.append(f"Mais l'attaque de {attacker.name} a echoue !")
             return messages
 
+        # Calculer et appliquer les degats
         effectiveness = 1.0
         if move.is_damaging():
             result = self.damage_calc.calculate(attacker, defender, move)
@@ -175,13 +193,16 @@ class Battle:
             else:
                 messages.append(f"{defender.name} perd {result.damage} PV !")
 
+                # Message d'efficacite
                 eff_text = self.type_chart.get_effectiveness_text(result.effectiveness)
                 if eff_text:
                     messages.append(eff_text)
 
+                # Coup critique
                 if result.is_critical:
                     messages.append("Coup critique !")
 
+        # Appliquer l'effet de statut
         if move.ailment and effectiveness > 0:
             ailment_msg = self._apply_ailment(move, defender)
             if ailment_msg:
@@ -210,17 +231,3 @@ class Battle:
         elif move.ailment and move.ailment_chance == 0 and not move.is_damaging():
             return target.apply_status(move.ailment)
         return ""
-
-    def _determine_order(self, pokemon1, move1, pokemon2, move2):
-        """Determine l'ordre d'attaque selon la vitesse."""
-        speed1 = pokemon1.get_effective_speed()
-        speed2 = pokemon2.get_effective_speed()
-
-        if speed1 > speed2:
-            return pokemon1, move1, pokemon2, move2
-        elif speed2 > speed1:
-            return pokemon2, move2, pokemon1, move1
-        else:
-            if random.random() < 0.5:
-                return pokemon1, move1, pokemon2, move2
-            return pokemon2, move2, pokemon1, move1

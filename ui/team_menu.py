@@ -139,11 +139,12 @@ class TeamMenu:
 
             # Barre de PV
             bar_x = slot_rect.x + 350
-            bar_y = slot_rect.y + 12
-            bar_width = 250
-            bar_height = 10
+            bar_y = slot_rect.y + 15
+            bar_width = 200
+            bar_height = 12
 
-            pygame.draw.rect(surface, BLACK, (bar_x, bar_y, bar_width, bar_height))
+            pygame.draw.rect(surface, (40, 40, 40), (bar_x, bar_y, bar_width, bar_height))
+
             if poke.max_hp > 0:
                 fill_ratio = max(0, poke.current_hp / poke.max_hp)
                 fill_width = int(bar_width * fill_ratio)
@@ -153,34 +154,31 @@ class TeamMenu:
                     bar_color = HP_YELLOW
                 else:
                     bar_color = HP_RED
-                if fill_width > 0:
-                    pygame.draw.rect(surface, bar_color, (bar_x, bar_y, fill_width, bar_height))
+                pygame.draw.rect(surface, bar_color, (bar_x, bar_y, fill_width, bar_height))
+
             pygame.draw.rect(surface, BORDER_COLOR, (bar_x, bar_y, bar_width, bar_height), 1)
 
             # Texte PV
             hp_text = self.font_info.render(
-                f"{poke.current_hp}/{poke.max_hp} PV", True, WHITE
+                f"{max(0, poke.current_hp)}/{poke.max_hp}", True, WHITE
             )
-            surface.blit(hp_text, (bar_x, bar_y + 15))
+            surface.blit(hp_text, (bar_x, bar_y + 16))
 
-            # Indicateurs speciaux
+            # Indicateur KO
             if poke.is_fainted():
                 ko_text = self.font_name.render("K.O.", True, (255, 80, 80))
-                surface.blit(ko_text, (slot_rect.right - 70, slot_rect.y + 22))
-            elif poke == self.current_pokemon:
-                active_text = self.font_info.render("En combat", True, (100, 180, 255))
-                surface.blit(active_text, (slot_rect.right - 100, slot_rect.y + 25))
+                surface.blit(ko_text, (slot_rect.right - 70, slot_rect.y + 25))
 
-            # Fleche de selection
-            if i == self.selected_index and not poke.is_fainted() and poke != self.current_pokemon:
-                arrow = self.font_name.render(">", True, (255, 255, 100))
-                surface.blit(arrow, (start_x - 25, slot_rect.y + 20))
-
-        # Instructions en bas
+        # Instructions
         if self.allow_cancel:
-            hint_text = "Haut/Bas = Naviguer | Entree = Choisir | Echap = Retour"
+            hint = self.font_info.render(
+                "Haut/Bas = naviguer | Entree = choisir | Echap = annuler",
+                True, (150, 150, 150)
+            )
         else:
-            hint_text = "Haut/Bas = Naviguer | Entree = Choisir"
-        hint = self.font_info.render(hint_text, True, (150, 150, 150))
+            hint = self.font_info.render(
+                "Haut/Bas = naviguer | Entree = choisir",
+                True, (150, 150, 150)
+            )
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, SCREEN_HEIGHT - 30))
