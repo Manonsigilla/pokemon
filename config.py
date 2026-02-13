@@ -13,6 +13,16 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
+IMAGES_DIR = os.path.join(BASE_DIR, "images")
+
+# --- Arenes (images de fond) ---
+ARENA_BACKGROUNDS = [
+    os.path.join(IMAGES_DIR, "image_foret.png"),
+    os.path.join(IMAGES_DIR, "image_neige.png"),
+    os.path.join(IMAGES_DIR, "image_plage.png"),
+    os.path.join(IMAGES_DIR, "image_prairie.png"),
+    os.path.join(IMAGES_DIR, "image_ruine.png"),
+]
 
 # --- API ---
 API_BASE_URL = "https://pokeapi.co/api/v2"
@@ -88,14 +98,14 @@ TYPE_COLORS = {
 
 # --- Positions de combat ---
 PLAYER_SPRITE_POS = (100, 250)
-ENEMY_SPRITE_POS = (500, 60)
+ENEMY_SPRITE_POS = (500, 110)
 
-PLAYER_INFO_POS = (460, 280)
+PLAYER_INFO_POS = (460, 380)
 ENEMY_INFO_POS = (30, 30)
 
-TEXT_BOX_RECT = (0, 430, 800, 170)
-MOVE_MENU_RECT = (400, 430, 400, 170)
-MOVE_TEXT_RECT = (0, 430, 400, 170)
+TEXT_BOX_RECT = (0, 490, 800, 110)
+MOVE_MENU_RECT = (400, 490, 400, 110)
+MOVE_TEXT_RECT = (0, 490, 400, 110)
 
 # --- Taille des sprites ---
 SPRITE_SCALE = 3

@@ -2,7 +2,7 @@
 
 import pygame
 
-from pokemon.config import SPRITE_SCALE
+from config import SPRITE_SCALE
 
 
 class SpriteLoader:

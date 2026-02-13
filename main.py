@@ -2,7 +2,7 @@
 
 import pygame
 
-from pokemon.config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE
 from api.client import APIClient
 from models.type_chart import TypeChart
 from states.state_manager import StateManager

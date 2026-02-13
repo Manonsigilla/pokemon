@@ -2,7 +2,7 @@
 
 import pygame
 
-from pokemon.config import BLACK, WHITE, DARK_GRAY, LIGHT_GRAY, BORDER_COLOR
+from config import BLACK, WHITE, DARK_GRAY, LIGHT_GRAY, BORDER_COLOR
 
 
 class Button:

@@ -2,7 +2,7 @@
 
 import pygame
 
-from pokemon.config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG
+from config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG
 
 
 class TextBox:

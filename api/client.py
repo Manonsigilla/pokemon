@@ -2,7 +2,7 @@
 
 import requests
 
-from pokemon.config import API_BASE_URL, SPRITE_URL_FRONT, SPRITE_URL_BACK, CACHE_DIR, DEFAULT_LEVEL
+from config import API_BASE_URL, SPRITE_URL_FRONT, SPRITE_URL_BACK, CACHE_DIR, DEFAULT_LEVEL
 from api.cache import Cache
 from models.move import Move
 from models.pokemon import Pokemon

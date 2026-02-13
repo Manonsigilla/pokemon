@@ -2,7 +2,7 @@
 
 import pygame
 
-from pokemon.config import (BLACK, WHITE, BORDER_COLOR, TYPE_COLORS,
+from config import (BLACK, WHITE, BORDER_COLOR, TYPE_COLORS,
                     LIGHT_GRAY, BG_LIGHT)
 
 
