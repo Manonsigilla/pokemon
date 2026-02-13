@@ -58,12 +58,19 @@ class BattleState(State):
         self.flash_timer = 0
 
         self._font_action = None
+        self._font_controls = None
 
     @property
     def font_action(self):
         if self._font_action is None:
-            self._font_action = pygame.font.Font(GAME_FONT, 22) if GAME_FONT else pygame.font.Font(None, 28)
+            self._font_action = pygame.font.Font(GAME_FONT, 22) if GAME_FONT else pygame.font.Font(None, 22)
         return self._font_action
+
+    @property
+    def font_controls(self):
+        if self._font_controls is None:
+            self._font_controls = pygame.font.Font(None, 18)
+        return self._font_controls
 
     def enter(self):
         """Initialise le combat avec les Pokemon selectionnes."""
@@ -275,8 +282,7 @@ class BattleState(State):
                 controls = "WASD + Espace"
             else:
                 controls = "Fleches + Entree"
-            ctrl_font = pygame.font.Font(None, 18)
-            ctrl_text = ctrl_font.render(controls, True, (100, 100, 100))
+            ctrl_text = self.font_controls.render(controls, True, (100, 100, 100))
             surface.blit(ctrl_text, (10, SCREEN_HEIGHT - 18))
         else:
             self.text_box.draw(surface)
