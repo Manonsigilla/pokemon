@@ -5,8 +5,8 @@ import pygame
 from states.state import State
 from ui.button import Button
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                    BG_DARK, YELLOW, RED, BLUE)
-from config import GAME_FONT
+                    BG_DARK, YELLOW, RED, BLUE, get_font)
+
 
 class TitleState(State):
     """Menu principal avec selection du mode de jeu."""
@@ -20,13 +20,13 @@ class TitleState(State):
     @property
     def title_font(self):
         if self._title_font is None:
-            self._title_font = pygame.font.Font(GAME_FONT, 59)
+            self._title_font = get_font(32)
         return self._title_font
 
     @property
     def subtitle_font(self):
         if self._subtitle_font is None:
-            self._subtitle_font = pygame.font.Font(GAME_FONT, 25)
+            self._subtitle_font = get_font(14)
         return self._subtitle_font
 
     def enter(self):
@@ -85,7 +85,7 @@ class TitleState(State):
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         title2_x = (SCREEN_WIDTH - title2.get_width()) // 2
         surface.blit(title, (title_x, 100))
-        surface.blit(title2, (title2_x, 170))
+        surface.blit(title2, (title2_x, 160))
 
         # Sous-titre
         subtitle = self.subtitle_font.render("Choisissez votre mode de jeu", True, WHITE)
@@ -97,6 +97,6 @@ class TitleState(State):
             button.draw(surface)
 
         # Instructions
-        hint = self.subtitle_font.render("ou appuyez sur 1 / 2", True, (150, 150, 150))
+        hint = self.subtitle_font.render("ou appuyez sur 1 / 2", True, (180, 180, 180))
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, 500))

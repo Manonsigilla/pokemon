@@ -3,8 +3,8 @@
 import pygame
 
 from config import (BLACK, WHITE, HP_GREEN, HP_YELLOW, HP_RED,
-                    BORDER_COLOR, BG_LIGHT)
-from config import GAME_FONT
+                    BORDER_COLOR, BG_LIGHT, get_font)
+
 
 class HPBar:
     """Barre de vie animee avec nom du Pokemon et niveau."""
@@ -27,13 +27,15 @@ class HPBar:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(GAME_FONT, 25)
+            # Taille reduite pour la font Pokemon (etait 28)
+            self._font_name = get_font(16)
         return self._font_name
 
     @property
     def font_hp(self):
         if self._font_hp is None:
-            self._font_hp = pygame.font.Font(GAME_FONT, 19)
+            # Taille reduite pour la font Pokemon (etait 22)
+            self._font_hp = get_font(14)
         return self._font_hp
 
     def update(self, dt):
@@ -51,29 +53,31 @@ class HPBar:
 
     def draw(self, surface):
         """Dessine le panneau d'info complet : nom, niveau, barre, texte PV."""
+        # Mesurer le texte pour adapter la largeur du panneau
+        name_text = self.font_name.render(f"{self.pokemon.name}", True, BLACK)
+        level_text = self.font_name.render(f"Nv.{self.pokemon.level}", True, BLACK)
+
+        # Largeur minimale = max(self.width, largeur nom + niveau + marge)
+        min_width = name_text.get_width() + level_text.get_width() + 30
+        panel_inner_width = max(self.width, min_width)
+
         # Fond du panneau
-        panel_width = self.width + 20
+        panel_width = panel_inner_width + 20
         panel_height = 65 if self.show_hp_text else 50
         panel_rect = pygame.Rect(self.x - 10, self.y - 5, panel_width, panel_height)
         pygame.draw.rect(surface, BG_LIGHT, panel_rect)
         pygame.draw.rect(surface, BORDER_COLOR, panel_rect, 2)
 
         # Nom et niveau
-        name_text = self.font_name.render(
-            f"{self.pokemon.name}", True, BLACK
-        )
-        level_text = self.font_name.render(
-            f"Nv.{self.pokemon.level}", True, BLACK
-        )
-        surface.blit(name_text, (self.x, self.y))
-        level_x = self.x + self.width - level_text.get_width()
-        surface.blit(level_text, (level_x, self.y))
+        surface.blit(name_text, (self.x, self.y + 2))
+        level_x = self.x + panel_inner_width - level_text.get_width()
+        surface.blit(level_text, (level_x, self.y + 2))
 
         # Barre de vie
         bar_y = self.y + 25
-        bar_rect = pygame.Rect(self.x, bar_y, self.width, self.bar_height)
+        bar_rect = pygame.Rect(self.x, bar_y, panel_inner_width, self.bar_height)
 
-        # Fond de la barre (gris)
+        # Fond de la barre (noir)
         pygame.draw.rect(surface, BLACK, bar_rect)
 
         # Remplissage
@@ -81,7 +85,7 @@ class HPBar:
             fill_ratio = max(0, self.displayed_hp / self.pokemon.max_hp)
         else:
             fill_ratio = 0
-        fill_width = int(self.width * fill_ratio)
+        fill_width = int(panel_inner_width * fill_ratio)
 
         if fill_width > 0:
             fill_color = self._get_bar_color(fill_ratio)
@@ -97,7 +101,7 @@ class HPBar:
                 f"{max(0, int(self.displayed_hp))}/{self.pokemon.max_hp}",
                 True, BLACK
             )
-            hp_x = self.x + self.width - hp_text.get_width()
+            hp_x = self.x + panel_inner_width - hp_text.get_width()
             surface.blit(hp_text, (hp_x, bar_y + 12))
 
         # Indicateur de statut

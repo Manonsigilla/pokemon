@@ -2,7 +2,7 @@
 
 import pygame
 
-from config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG, GAME_FONT
+from config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG, get_font
 
 
 class TextBox:
@@ -22,7 +22,7 @@ class TextBox:
     @property
     def font(self):
         if self._font is None:
-            self._font = pygame.font.Font(GAME_FONT, 23)
+            self._font = get_font(16)
         return self._font
 
     def set_text(self, text):
@@ -95,8 +95,9 @@ class TextBox:
         if current_line:
             lines.append(current_line)
 
+        line_height = self.font.get_height() + 6
         y = self.rect.y + self.padding
         for line in lines[:4]:  # Max 4 lignes
             text_surface = self.font.render(line, True, BLACK)
             surface.blit(text_surface, (self.rect.x + self.padding, y))
-            y += 30
+            y += line_height

@@ -1,6 +1,7 @@
 """Constantes globales du jeu Pokemon Battle Arena."""
 
 import os
+import pygame
 
 # --- Ecran ---
 SCREEN_WIDTH = 800
@@ -13,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 FONTS_DIR = os.path.join(ASSETS_DIR, "fonts")
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
-IMAGES_DIR = os.path.join(BASE_DIR, "images")  # Ajout Louis
+IMAGES_DIR = os.path.join(BASE_DIR, "images")
 
 # --- Police custom (Angie) ---
 GAME_FONT = os.path.join(FONTS_DIR, "PKMN_RBYGSC.ttf")
@@ -35,9 +36,7 @@ SPRITE_URL_FRONT = "https://raw.githubusercontent.com/PokeAPI/sprites/master/spr
 SPRITE_URL_BACK = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/{id}.png"
 
 # Pool de Pokemon disponibles (Gen 1)
-AVAILABLE_POKEMON_IDS = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151
-]
+AVAILABLE_POKEMON_IDS = list(range(1, 152))
 
 # Niveau par defaut
 DEFAULT_LEVEL = 50
@@ -100,3 +99,13 @@ MOVE_TEXT_RECT = (0, 490, 400, 110)
 
 # --- Taille des sprites ---
 SPRITE_SCALE = 3
+
+def get_font(size):
+    """Charge la font Pokemon custom ou fallback sur la font systeme.
+    
+    La font PKMN_RBYGSC est une font bitmap : il faut utiliser des tailles
+    plus petites que les fonts systeme pour un rendu lisible.
+    """
+    if GAME_FONT:
+        return pygame.font.Font(GAME_FONT, size)
+    return pygame.font.Font(None, size)
