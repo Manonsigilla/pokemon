@@ -4,7 +4,7 @@ import pygame
 
 from config import (BLACK, WHITE, BORDER_COLOR, MENU_BG,
                     TYPE_COLORS, DARK_GRAY, LIGHT_GRAY)
-
+from config import GAME_FONT
 
 class MoveMenu:
     """Grille 2x2 pour la selection des attaques."""
@@ -20,13 +20,13 @@ class MoveMenu:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(None, 24)
+            self._font_name = pygame.font.Font(GAME_FONT, 20)
         return self._font_name
 
     @property
     def font_info(self):
         if self._font_info is None:
-            self._font_info = pygame.font.Font(None, 18)
+            self._font_info = pygame.font.Font(GAME_FONT, 15)
         return self._font_info
 
     def navigate(self, direction):

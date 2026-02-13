@@ -2,7 +2,7 @@
 
 import pygame
 
-from config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG
+from config import BLACK, WHITE, BORDER_COLOR, TEXT_BOX_BG, GAME_FONT
 
 
 class TextBox:
@@ -22,7 +22,7 @@ class TextBox:
     @property
     def font(self):
         if self._font is None:
-            self._font = pygame.font.Font(None, 28)
+            self._font = pygame.font.Font(GAME_FONT, 23)
         return self._font
 
     def set_text(self, text):

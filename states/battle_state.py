@@ -1,22 +1,27 @@
-"""Ecran de combat Pokemon style GBA - Support equipes multi-Pokemon."""
+"""Ecran de combat Pokemon style GBA avec animations améliorées - Support equipes multi-Pokemon."""
 
 import pygame
+import os
 
 from states.state import State
 from battle.battle import Battle
 from battle.ai import AIOpponent
+from battle.animation import (AttackAnimation, ShakeAnimation, 
+                            ImpactParticles, EffectivenessFlash)
 from ui.hp_bar import HPBar
 from ui.text_box import TextBox
 from ui.move_menu import MoveMenu
 from ui.action_menu import ActionMenu
 from ui.team_menu import TeamMenu
 from ui.sprite_loader import SpriteLoader
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
-                    PLAYER_INFO_POS, ENEMY_INFO_POS, TEXT_BOX_RECT,
-                    MOVE_MENU_RECT, MOVE_TEXT_RECT)
+from ui.damage_number import DamageNumber
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BASE_DIR,
+                    PLAYER_SPRITE_POS, ENEMY_SPRITE_POS,
+                    PLAYER_INFO_POS, ENEMY_INFO_POS,
+                    TEXT_BOX_RECT, MOVE_MENU_RECT)
 
 
-# Phases du combat
+# Phases du combat (tour par tour amélioré)
 PHASE_INTRO = "intro"
 PHASE_ACTION_P1 = "action_p1"       # Menu Combat / Pokemon / Fuite (joueur 1)
 PHASE_CHOOSE_P1 = "choose_p1"       # Selection attaque joueur 1
@@ -25,12 +30,13 @@ PHASE_CHOOSE_P2 = "choose_p2"       # Selection attaque joueur 2
 PHASE_SWITCH_P1 = "switch_p1"       # Switch volontaire joueur 1
 PHASE_SWITCH_P2 = "switch_p2"       # Switch volontaire joueur 2
 PHASE_FORCE_SWITCH = "force_switch"  # Switch force apres KO
-PHASE_ANIMATE = "animate"
-PHASE_RESULT = "result"
+PHASE_EXECUTE_ANIMATION = "execute_animation"  # Animations d'attaque
+PHASE_SHOW_RESULTS = "show_results"  # Affichage des messages de résultat d'attaque
+PHASE_RESULT = "result"              # Ecran de résultat final du combat
 
 
 class BattleState(State):
-    """Gere l'affichage et l'interaction du combat avec equipes."""
+    """Gere l'affichage et l'interaction du combat avec animations avec equipes."""
 
     def __init__(self, state_manager, type_chart):
         super().__init__(state_manager)
@@ -49,17 +55,37 @@ class BattleState(State):
 
         self.player_sprite = None
         self.enemy_sprite = None
+        
+        # Background image
+        self.background_image = None
 
+        # Messages
         self.message_queue = []
         self.current_message_index = 0
 
-        self.move_p1 = None
-        self.move_p2 = None
+        # Moves sélectionnés
+        self.selected_move_p1 = None
+        self.selected_move_p2 = None
+        self.current_player = 1
 
-        # Flash d'attaque
-        self.flash_alpha = 0
-        self.flash_timer = 0
+        # Système d'animation
+        self.current_attacker = None  # "player" ou "enemy"
+        self.attack_animation = None
+        self.shake_animation = None
+        self.impact_particles = []
+        self.damage_numbers = []
+        self.effectiveness_flash = None
+        
+        # Turn order
+        self.turn_order = []  # Liste de tuples (pokemon, move, is_player)
+        self.current_turn_index = 0
+        
+        # Positions des sprites
+        self.player_sprite_pos = list(PLAYER_SPRITE_POS)
+        self.enemy_sprite_pos = list(ENEMY_SPRITE_POS)
 
+        self._attack_missed = False
+        self._last_result = None
         # Qui doit switch apres un KO (1 ou 2)
         self._force_switch_player = None
         
@@ -80,6 +106,38 @@ class BattleState(State):
         else:
             self.ai = None
 
+        # Charger le background
+        try:
+            bg_path = os.path.join(BASE_DIR, "assets", "backgrounds", "battle_bg.png")
+            self.background_image = pygame.image.load(bg_path).convert()
+            self.background_image = pygame.transform.scale(
+                self.background_image, 
+                (SCREEN_WIDTH, SCREEN_HEIGHT)
+            )
+        except Exception as e:
+            print(f"Could not load background image: {e}")
+            self.background_image = None
+
+        # Charger les sprites
+        self.player_sprite = self.sprite_loader.load_sprite(pokemon1.back_sprite_path)
+        self.enemy_sprite = self.sprite_loader.load_sprite(pokemon2.front_sprite_path)
+        
+        # Reset positions
+        self.player_sprite_pos = list(PLAYER_SPRITE_POS)
+        self.enemy_sprite_pos = list(ENEMY_SPRITE_POS)
+
+        # Créer les widgets UI (positions originales)
+        self.hp_bar_p1 = HPBar(
+            PLAYER_INFO_POS[0], PLAYER_INFO_POS[1],
+            250, pokemon1, show_hp_text=True
+        )
+        self.hp_bar_p2 = HPBar(
+            ENEMY_INFO_POS[0], ENEMY_INFO_POS[1],
+            250, pokemon2, show_hp_text=False  # Pas de texte HP pour l'ennemi
+        )
+
+        self.text_box = TextBox(*TEXT_BOX_RECT)
+        self.move_menu = MoveMenu(*MOVE_MENU_RECT, pokemon1.moves)
         # Charger les sprites du Pokemon actif
         self._load_sprites()
 
@@ -100,8 +158,12 @@ class BattleState(State):
         self.current_message_index = 0
         self.text_box.set_text(self.message_queue[0])
 
-        self.move_p1 = None
-        self.move_p2 = None
+        # Reset animations
+        self.attack_animation = None
+        self.shake_animation = None
+        self.impact_particles = []
+        self.damage_numbers = []
+        self.effectiveness_flash = None
         self._force_switch_player = None
         self._fleeing = False
 
@@ -177,8 +239,8 @@ class BattleState(State):
                 elif self.phase == PHASE_RESULT:
                     self._handle_result(event)
 
-    def _handle_message_advance(self, event):
-        """Avance dans la file de messages."""
+    def _handle_intro_input(self, event):
+        """Avance les messages d'intro."""
         if event.key in (pygame.K_SPACE, pygame.K_RETURN):
             if not self.text_box.is_complete:
                 self.text_box.skip_animation()
@@ -493,28 +555,222 @@ class BattleState(State):
         self.text_box.update(dt)
         self.hp_bar_p1.update(dt)
         self.hp_bar_p2.update(dt)
+        
+        # Animations d'attaque
+        if self.phase == PHASE_EXECUTE_ANIMATION:
+            all_animations_done = True
+            
+            # Attack animation
+            if self.attack_animation:
+                self.attack_animation.update(dt)
+                
+                # Mettre à jour la position de l'attaquant
+                if self.current_attacker == "player":
+                    self.player_sprite_pos = list(self.attack_animation.get_attacker_position())
+                else:
+                    self.enemy_sprite_pos = list(self.attack_animation.get_attacker_position())
+                
+                # Déclencher l'impact
+                if self.attack_animation.should_show_impact() and not self.shake_animation:
+                    self._apply_attack_damage()
+                
+                if self.attack_animation.is_complete:
+                    self.attack_animation = None
+                else:
+                    all_animations_done = False
+            
+            # Shake animation
+            if self.shake_animation:
+                self.shake_animation.update(dt)
+                if self.current_attacker == "player":
+                    self.enemy_sprite_pos = list(self.shake_animation.get_position())
+                else:
+                    self.player_sprite_pos = list(self.shake_animation.get_position())
+                
+                if self.shake_animation.is_complete:
+                    # Remettre la position correcte
+                    if self.current_attacker == "player":
+                        self.enemy_sprite_pos = list(ENEMY_SPRITE_POS)
+                    else:
+                        self.player_sprite_pos = list(PLAYER_SPRITE_POS)
+                    self.shake_animation = None
+                else:
+                    all_animations_done = False
+            
+            # Particules
+            for particle in self.impact_particles[:]:
+                particle.update(dt)
+                if particle.is_complete:
+                    self.impact_particles.remove(particle)
+            if self.impact_particles:
+                all_animations_done = False
+            
+            # Dégâts flottants
+            for dmg_num in self.damage_numbers[:]:
+                dmg_num.update(dt)
+                if dmg_num.is_complete:
+                    self.damage_numbers.remove(dmg_num)
+            if self.damage_numbers:
+                all_animations_done = False
+            
+            # Flash d'efficacité
+            if self.effectiveness_flash:
+                self.effectiveness_flash.update(dt)
+                if self.effectiveness_flash.is_complete:
+                    self.effectiveness_flash = None
+                else:
+                    all_animations_done = False
+            
+            # Toutes les animations sont terminées -> passer aux résultats
+            if all_animations_done:
+                self._show_attack_results()
 
-        # Flash d'attaque
-        if self.flash_timer > 0:
-            self.flash_timer -= dt
-            if self.flash_timer <= 0:
-                self.flash_alpha = 0
+    def _apply_attack_damage(self):
+        """Applique les dégâts et lance les animations d'impact."""
+        attacker, move, is_player = self.turn_order[self.current_turn_index]
+        defender = self.battle.pokemon2 if is_player else self.battle.pokemon1
+        
+        # Vérifier la précision
+        import random
+        if random.randint(1, 100) > move.accuracy:
+            # Attaque ratée - pas d'animation d'impact
+            self._attack_missed = True
+            return
+        
+        self._attack_missed = False
+        
+        # Calculer les dégâts
+        if move.is_damaging():
+            result = self.battle.damage_calc.calculate(attacker, defender, move)
+            defender.take_damage(result.damage)
+            
+            # Sauvegarder le résultat pour les messages
+            self._last_result = result
+            
+            # Position du défenseur pour les animations
+            if is_player:
+                defender_pos = list(ENEMY_SPRITE_POS)
+            else:
+                defender_pos = list(PLAYER_SPRITE_POS)
+            
+            # Shake
+            self.shake_animation = ShakeAnimation(
+                tuple(defender_pos),
+                intensity=12 if result.damage > 50 else 8
+            )
+            
+            # Particules
+            particle_pos = (
+                defender_pos[0] + 40,
+                defender_pos[1] + 40
+            )
+            
+            # Couleur selon efficacité
+            if result.effectiveness >= 2.0:
+                particle_color = (100, 255, 100)
+            elif result.effectiveness < 1.0 and result.effectiveness > 0:
+                particle_color = (255, 100, 100)
+            else:
+                particle_color = (255, 255, 100)
+            
+            self.impact_particles.append(ImpactParticles(particle_pos, particle_color))
+            
+            # Dégâts flottants
+            dmg_pos = (particle_pos[0], particle_pos[1] - 20)
+            self.damage_numbers.append(
+                DamageNumber(
+                    result.damage,
+                    dmg_pos,
+                    is_critical=result.is_critical,
+                    is_effective=result.effectiveness
+                )
+            )
+            
+            # Flash d'efficacité
+            if result.effectiveness != 1.0:
+                self.effectiveness_flash = EffectivenessFlash(result.effectiveness)
+            
+            # Appliquer le statut
+            if move.ailment and result.effectiveness > 0:
+                if move.ailment_chance > 0:
+                    if random.randint(1, 100) <= move.ailment_chance:
+                        defender.apply_status(move.ailment)
+        else:
+            self._last_result = None
+
+    def _show_attack_results(self):
+        """Affiche les messages de résultat de l'attaque."""
+        attacker, move, is_player = self.turn_order[self.current_turn_index]
+        defender = self.battle.pokemon2 if is_player else self.battle.pokemon1
+        
+        messages = []
+        
+        # Attaque ratée ?
+        if hasattr(self, '_attack_missed') and self._attack_missed:
+            messages.append(f"L'attaque de {attacker.name.upper()} a échoué !")
+        elif hasattr(self, '_last_result') and self._last_result:
+            result = self._last_result
+            
+            if result.effectiveness == 0:
+                messages.append("Ça n'a aucun effet...")
+            else:
+                messages.append(f"{defender.name.upper()} perd {result.damage} PV !")
+                
+                # Message d'efficacité
+                eff_text = self.type_chart.get_effectiveness_text(result.effectiveness)
+                if eff_text:
+                    messages.append(eff_text)
+                
+                if result.is_critical:
+                    messages.append("Coup critique !")
+        
+        # Vérifier KO
+        if defender.is_fainted():
+            self.battle.is_over = True
+            self.battle.winner = attacker
+            self.battle.loser = defender
+            messages.append(f"{defender.name.upper()} est K.O. !")
+            messages.append(f"{attacker.name.upper()} remporte le combat !")
+        
+        # Afficher les messages
+        if messages:
+            self.message_queue = messages
+            self.current_message_index = 0
+            self.text_box.set_text(messages[0])
+            self.phase = PHASE_SHOW_RESULTS
+        else:
+            # Pas de messages, passer au tour suivant
+            self.current_turn_index += 1
+            self._execute_next_attack()
 
     def draw(self, surface):
         """Dessine l'ecran de combat complet."""
-        # Fond de l'arene
+        # Fond
         self._draw_background(surface)
 
         # Sprites des Pokemon
         if self.player_sprite:
-            surface.blit(self.player_sprite, PLAYER_SPRITE_POS)
+            surface.blit(self.player_sprite, self.player_sprite_pos)
         if self.enemy_sprite:
-            surface.blit(self.enemy_sprite, ENEMY_SPRITE_POS)
+            surface.blit(self.enemy_sprite, self.enemy_sprite_pos)
 
         # Barres de vie
         self.hp_bar_p1.draw(surface)
         self.hp_bar_p2.draw(surface)
 
+        # Particules d'impact
+        for particles in self.impact_particles:
+            particles.draw(surface)
+        
+        # Dégâts flottants
+        for dmg_num in self.damage_numbers:
+            dmg_num.draw(surface)
+
+        # Zone de texte
+        self.text_box.draw(surface)
+        
+        # Menu des moves
+        if self.move_menu.visible:
         # Indicateurs d'equipe (petites pokeballs)
         self._draw_team_indicators(surface)
 
@@ -565,6 +821,10 @@ class BattleState(State):
             flash_surface.fill(WHITE)
             flash_surface.set_alpha(int(self.flash_alpha))
             surface.blit(flash_surface, (0, 0))
+        
+        # Flash d'efficacité
+        if self.effectiveness_flash:
+            self.effectiveness_flash.draw(surface)
 
         # Team menu en overlay (par dessus tout)
         if self.team_menu and self.team_menu.visible:
@@ -606,6 +866,17 @@ class BattleState(State):
             pygame.draw.circle(surface, (50, 50, 50), (x, y_p2), indicator_size // 2, 1)
 
     def _draw_background(self, surface):
+        """Dessine le fond de l'arene."""
+        if self.background_image:
+            surface.blit(self.background_image, (0, 0))
+        else:
+            # Fallback
+            surface.fill((136, 192, 240))
+            pygame.draw.ellipse(surface, (144, 200, 120), (420, 230, 320, 60))
+            pygame.draw.ellipse(surface, (120, 176, 100), (420, 230, 320, 60), 2)
+            pygame.draw.ellipse(surface, (144, 200, 120), (20, 420, 350, 70))
+            pygame.draw.ellipse(surface, (120, 176, 100), (20, 420, 350, 70), 2)
+            pygame.draw.rect(surface, (120, 176, 100), (0, 430, SCREEN_WIDTH, 170))
         """Dessine le fond de l'arene style GBA."""
         # Ciel
         surface.fill((136, 192, 240))
