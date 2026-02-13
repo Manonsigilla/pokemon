@@ -100,3 +100,19 @@ MOVE_TEXT_RECT = (0, 430, 400, 170)
 
 # --- Taille des sprites ---
 SPRITE_SCALE = 3
+
+# --- Positions de combat (POSITIONS ORIGINALES) ---
+PLAYER_SPRITE_POS = (100, 250)
+ENEMY_SPRITE_POS = (500, 60)
+
+PLAYER_INFO_POS = (460, 280)  # HP bar joueur (en haut à droite)
+ENEMY_INFO_POS = (30, 30)     # HP bar ennemi (en haut à gauche)
+
+TEXT_BOX_RECT = (0, 430, 800, 170)
+MOVE_MENU_RECT = (400, 430, 400, 170)
+MOVE_TEXT_RECT = (0, 430, 400, 170)
+
+# --- Animation ---
+ATTACK_ANIMATION_SPEED = 3.0
+SHAKE_INTENSITY = 12
+PARTICLE_COLOR = (255, 255, 100)
