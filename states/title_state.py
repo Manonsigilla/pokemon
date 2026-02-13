@@ -6,7 +6,7 @@ from states.state import State
 from ui.button import Button
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BG_DARK, YELLOW, RED, BLUE)
-
+from config import GAME_FONT
 
 class TitleState(State):
     """Menu principal avec selection du mode de jeu."""
@@ -20,13 +20,13 @@ class TitleState(State):
     @property
     def title_font(self):
         if self._title_font is None:
-            self._title_font = pygame.font.Font(None, 64)
+            self._title_font = pygame.font.Font(GAME_FONT, 59)
         return self._title_font
 
     @property
     def subtitle_font(self):
         if self._subtitle_font is None:
-            self._subtitle_font = pygame.font.Font(None, 28)
+            self._subtitle_font = pygame.font.Font(GAME_FONT, 25)
         return self._subtitle_font
 
     def enter(self):

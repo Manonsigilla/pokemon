@@ -39,13 +39,13 @@ class PokemonCard:
     @property
     def font_name(self):
         if self._font_name is None:
-            self._font_name = pygame.font.Font(None, 20)
+            self._font_name = pygame.font.Font(GAME_FONT, 18)
         return self._font_name
 
     @property
     def font_type(self):
         if self._font_type is None:
-            self._font_type = pygame.font.Font(None, 14)
+            self._font_type = pygame.font.Font(GAME_FONT, 13)
         return self._font_type
 
     @property

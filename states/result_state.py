@@ -6,7 +6,7 @@ from states.state import State
 from ui.sprite_loader import SpriteLoader
 from config import (SCREEN_WIDTH, WHITE,
                     BG_DARK, YELLOW, GREEN)
-
+from config import GAME_FONT
 
 class ResultState(State):
     """Affiche le resultat du combat avec le Pokemon gagnant."""
@@ -22,13 +22,13 @@ class ResultState(State):
     @property
     def font_title(self):
         if self._font_title is None:
-            self._font_title = pygame.font.Font(None, 48)
+            self._font_title = pygame.font.Font(GAME_FONT, 44)
         return self._font_title
 
     @property
     def font_info(self):
         if self._font_info is None:
-            self._font_info = pygame.font.Font(None, 28)
+            self._font_info = pygame.font.Font(GAME_FONT, 23)
         return self._font_info
 
     def enter(self):
