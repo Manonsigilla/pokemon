@@ -16,6 +16,8 @@ class TitleState(State):
         self.buttons = []
         self._title_font = None
         self._subtitle_font = None
+        self._show_difficulty = False
+        self.difficulty_buttons = []
 
     @property
     def title_font(self):
@@ -31,6 +33,7 @@ class TitleState(State):
 
     def enter(self):
         """Cree les boutons du menu."""
+        self._show_difficulty = False
         center_x = SCREEN_WIDTH // 2
         btn_width = 300
         btn_height = 60
@@ -48,29 +51,81 @@ class TitleState(State):
             ),
         ]
 
+        # Boutons de difficulte (affiches quand on clique "Joueur vs IA")
+        diff_btn_width = 200
+        diff_btn_height = 50
+        self.difficulty_buttons = [
+            Button(
+                center_x - diff_btn_width // 2, 300,
+                diff_btn_width, diff_btn_height,
+                "Facile"
+            ),
+            Button(
+                center_x - diff_btn_width // 2, 370,
+                diff_btn_width, diff_btn_height,
+                "Normal"
+            ),
+            Button(
+                center_x - diff_btn_width // 2, 440,
+                diff_btn_width, diff_btn_height,
+                "Difficile"
+            ),
+        ]
+
     def handle_events(self, events):
         """Detecte les clics sur les boutons."""
         mouse_pos = pygame.mouse.get_pos()
 
-        for button in self.buttons:
-            button.check_hover(mouse_pos)
+        if self._show_difficulty:
+            for button in self.difficulty_buttons:
+                button.check_hover(mouse_pos)
+        else:
+            for button in self.buttons:
+                button.check_hover(mouse_pos)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if self.buttons[0].check_click(mouse_pos, True):
-                    self.state_manager.shared_data["mode"] = "pvp"
-                    self.state_manager.change_state("selection")
-                elif self.buttons[1].check_click(mouse_pos, True):
-                    self.state_manager.shared_data["mode"] = "pvia"
-                    self.state_manager.change_state("selection")
+                if self._show_difficulty:
+                    self._handle_difficulty_click(mouse_pos)
+                else:
+                    if self.buttons[0].check_click(mouse_pos, True):
+                        self.state_manager.shared_data["mode"] = "pvp"
+                        self.state_manager.change_state("selection")
+                    elif self.buttons[1].check_click(mouse_pos, True):
+                        self._show_difficulty = True
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_1:
-                    self.state_manager.shared_data["mode"] = "pvp"
-                    self.state_manager.change_state("selection")
-                elif event.key == pygame.K_2:
-                    self.state_manager.shared_data["mode"] = "pvia"
-                    self.state_manager.change_state("selection")
+                if self._show_difficulty:
+                    self._handle_difficulty_key(event)
+                else:
+                    if event.key == pygame.K_1:
+                        self.state_manager.shared_data["mode"] = "pvp"
+                        self.state_manager.change_state("selection")
+                    elif event.key == pygame.K_2:
+                        self._show_difficulty = True
+
+    def _handle_difficulty_click(self, mouse_pos):
+        """Gere le clic sur un bouton de difficulte."""
+        difficulties = ["facile", "normal", "difficile"]
+        for i, button in enumerate(self.difficulty_buttons):
+            if button.check_click(mouse_pos, True):
+                self.state_manager.shared_data["mode"] = "pvia"
+                self.state_manager.shared_data["ai_difficulty"] = difficulties[i]
+                self.state_manager.change_state("selection")
+                return
+
+    def _handle_difficulty_key(self, event):
+        """Gere les touches clavier dans le sous-menu difficulte."""
+        difficulties = ["facile", "normal", "difficile"]
+        key_map = {pygame.K_1: 0, pygame.K_2: 1, pygame.K_3: 2}
+
+        if event.key in key_map:
+            idx = key_map[event.key]
+            self.state_manager.shared_data["mode"] = "pvia"
+            self.state_manager.shared_data["ai_difficulty"] = difficulties[idx]
+            self.state_manager.change_state("selection")
+        elif event.key == pygame.K_ESCAPE:
+            self._show_difficulty = False
 
     def update(self, dt):
         pass
@@ -87,16 +142,39 @@ class TitleState(State):
         surface.blit(title, (title_x, 100))
         surface.blit(title2, (title2_x, 160))
 
-        # Sous-titre
-        subtitle = self.subtitle_font.render("Choisissez votre mode de jeu", True, WHITE)
-        sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
-        surface.blit(subtitle, (sub_x, 270))
+        if self._show_difficulty:
+            # Sous-titre difficulte
+            subtitle = self.subtitle_font.render(
+                "Choisissez la difficulte", True, WHITE
+            )
+            sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
+            surface.blit(subtitle, (sub_x, 260))
 
-        # Boutons
-        for button in self.buttons:
-            button.draw(surface)
+            # Boutons de difficulte
+            for button in self.difficulty_buttons:
+                button.draw(surface)
 
-        # Instructions
-        hint = self.subtitle_font.render("ou appuyez sur 1 / 2", True, (180, 180, 180))
-        hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
-        surface.blit(hint, (hint_x, 500))
+            # Instructions
+            hint = self.subtitle_font.render(
+                "1 / 2 / 3 ou cliquez | Echap = retour", True, (180, 180, 180)
+            )
+            hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
+            surface.blit(hint, (hint_x, 520))
+        else:
+            # Sous-titre
+            subtitle = self.subtitle_font.render(
+                "Choisissez votre mode de jeu", True, WHITE
+            )
+            sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
+            surface.blit(subtitle, (sub_x, 270))
+
+            # Boutons
+            for button in self.buttons:
+                button.draw(surface)
+
+            # Instructions
+            hint = self.subtitle_font.render(
+                "ou appuyez sur 1 / 2", True, (180, 180, 180)
+            )
+            hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
+            surface.blit(hint, (hint_x, 500))

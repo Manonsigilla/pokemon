@@ -40,3 +40,6 @@ cache/
 # OS
 .DS_Store
 Thumbs.db
+
+# local duplicate copies
+* 2.*

@@ -222,7 +222,14 @@ class SelectionState(State):
 
                 # Construire le Player 2
                 if mode == "pvia":
-                    player2 = Player("Champion", is_ai=True)
+                    difficulty = self.state_manager.shared_data.get("ai_difficulty", "normal")
+                    ai_names = {
+                        "facile": "Debutant",
+                        "normal": "Champion",
+                        "difficile": "Maitre",
+                    }
+                    ai_name = ai_names.get(difficulty, "Champion")
+                    player2 = Player(ai_name, is_ai=True)
                 else:
                     player2 = Player("Joueur 2")
                 for pid in self.selected[2]:
