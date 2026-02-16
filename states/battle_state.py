@@ -5,7 +5,7 @@ import pygame
 
 from states.state import State
 from battle.battle import Battle
-from battle.ai import AIOpponent
+from battle.ai import AIOpponent, AI_SWITCH
 # Angie : animations de combat
 from battle.animation import (AttackAnimation, ShakeAnimation,
                               ImpactParticles, EffectivenessFlash)
@@ -117,8 +117,13 @@ class BattleState(State):
         self.battle = Battle(player1, player2, self.type_chart, battle_type="arena")
 
         # IA si mode PvIA
+        self.ai_difficulty = self.state_manager.shared_data.get("ai_difficulty", "normal")
         if mode == "pvia":
-            self.ai = AIOpponent(self.battle.pokemon2, self.type_chart)
+            self.ai = AIOpponent(
+                self.battle.pokemon2, self.type_chart,
+                difficulty=self.ai_difficulty,
+                team=self.battle.player2.team
+            )
         else:
             self.ai = None
 
@@ -216,7 +221,11 @@ class BattleState(State):
             self.enemy_sprite_pos = list(ENEMY_SPRITE_POS)
             # Manon : mettre a jour l'IA
             if self.ai:
-                self.ai = AIOpponent(self.battle.pokemon2, self.type_chart)
+                self.ai = AIOpponent(
+                    self.battle.pokemon2, self.type_chart,
+                    difficulty=self.ai_difficulty,
+                    team=self.battle.player2.team
+                )
 
     # =========================================================================
     # GESTION DES EVENEMENTS
@@ -352,11 +361,39 @@ class BattleState(State):
                 self.move_menu.visible = False
 
                 if self.ai:
-                    # L'IA choisit automatiquement
-                    self.move_p2 = self.ai.choose_move(self.battle.pokemon1)
-                    # Angie : determiner l'ordre et lancer les animations
-                    self._determine_turn_order()
-                    self._execute_next_attack()
+                    # L'IA choisit automatiquement (peut decider de switcher)
+                    switchable = self.battle.player2.get_switchable_pokemon(
+                        self.battle.pokemon2
+                    )
+                    action, switch_target = self.ai.choose_action(
+                        self.battle.pokemon1, switchable
+                    )
+
+                    if action == AI_SWITCH and switch_target:
+                        # L'IA decide de switcher volontairement
+                        messages = self.battle.switch_pokemon(2, switch_target)
+                        self._refresh_ui_after_switch(2)
+                        # Le joueur attaque le nouveau Pokemon
+                        msgs_attack = self.battle._process_turn(
+                            self.battle.pokemon1, self.battle.pokemon2, self.move_p1
+                        )
+                        self.move_p1.use()
+                        messages.extend(msgs_attack)
+                        if self.battle.pokemon2.is_fainted():
+                            messages.append(f"{self.battle.pokemon2.name} est K.O. !")
+                            if not self.battle.player2.has_alive_pokemon():
+                                self.battle.is_over = True
+                                self.battle.winner = self.battle.player1
+                                self.battle.loser = self.battle.player2
+                                messages.append(
+                                    f"{self.battle.player1.name} remporte le combat !"
+                                )
+                        self._show_messages(messages)
+                    else:
+                        self.move_p2 = action
+                        # Angie : determiner l'ordre et lancer les animations
+                        self._determine_turn_order()
+                        self._execute_next_attack()
                 else:
                     # Manon : passer au joueur 2 - menu d'action
                     self._enter_action_p2()
@@ -462,6 +499,7 @@ class BattleState(State):
             self._refresh_ui_after_switch(1)
 
             if self.ai:
+                # L'IA attaque pendant le switch du joueur (pas de switch IA ici)
                 self.move_p2 = self.ai.choose_move(self.battle.pokemon1)
                 msgs_attack = self.battle._process_turn(
                     self.battle.pokemon2, self.battle.pokemon1, self.move_p2
@@ -498,10 +536,10 @@ class BattleState(State):
         self._force_switch_player = player_num
 
         if player_num == 2 and self.ai:
-            # L'IA choisit automatiquement le meilleur Pokemon restant
+            # L'IA choisit le meilleur Pokemon selon la difficulte
             alive = self.battle.player2.get_alive_pokemon()
             if alive:
-                best = max(alive, key=lambda p: p.current_hp)
+                best = self.ai.choose_switch_after_ko(alive, self.battle.pokemon1)
                 messages = self.battle.switch_pokemon(2, best)
                 self._refresh_ui_after_switch(2)
                 self._force_switch_player = None

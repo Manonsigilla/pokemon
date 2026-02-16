@@ -1,7 +1,7 @@
 [
     {
         "id": 1,
-        "name": "bulbasaur",
+        "name": "bulbizarre",
         "types": [
             "grass",
             "poison"
@@ -31,7 +31,7 @@
     },
     {
         "id": 2,
-        "name": "ivysaur",
+        "name": "herbizarre",
         "types": [
             "grass",
             "poison"
@@ -61,7 +61,7 @@
     },
     {
         "id": 3,
-        "name": "venusaur",
+        "name": "florizarre",
         "types": [
             "grass",
             "poison"
@@ -91,7 +91,7 @@
     },
     {
         "id": 4,
-        "name": "charmander",
+        "name": "salamèche",
         "types": [
             "fire"
         ],
@@ -120,7 +120,7 @@
     },
     {
         "id": 5,
-        "name": "charmeleon",
+        "name": "reptincel",
         "types": [
             "fire"
         ],
@@ -149,7 +149,7 @@
     },
     {
         "id": 6,
-        "name": "charizard",
+        "name": "dracaufeu",
         "types": [
             "fire",
             "flying"
@@ -179,7 +179,7 @@
     },
     {
         "id": 7,
-        "name": "squirtle",
+        "name": "carapuce",
         "types": [
             "water"
         ],
@@ -208,7 +208,7 @@
     },
     {
         "id": 8,
-        "name": "wartortle",
+        "name": "carabaffe",
         "types": [
             "water"
         ],
@@ -237,7 +237,7 @@
     },
     {
         "id": 9,
-        "name": "blastoise",
+        "name": "tortank",
         "types": [
             "water"
         ],
@@ -266,7 +266,7 @@
     },
     {
         "id": 10,
-        "name": "caterpie",
+        "name": "chenipan",
         "types": [
             "bug"
         ],
@@ -295,7 +295,7 @@
     },
     {
         "id": 11,
-        "name": "metapod",
+        "name": "chrysacier",
         "types": [
             "bug"
         ],
@@ -324,7 +324,7 @@
     },
     {
         "id": 12,
-        "name": "butterfree",
+        "name": "papilusion",
         "types": [
             "bug",
             "flying"
@@ -354,7 +354,7 @@
     },
     {
         "id": 13,
-        "name": "weedle",
+        "name": "aspicot",
         "types": [
             "bug",
             "poison"
@@ -384,7 +384,7 @@
     },
     {
         "id": 14,
-        "name": "kakuna",
+        "name": "coconfort",
         "types": [
             "bug",
             "poison"
@@ -414,7 +414,7 @@
     },
     {
         "id": 15,
-        "name": "beedrill",
+        "name": "dardargnan",
         "types": [
             "bug",
             "poison"
@@ -444,7 +444,7 @@
     },
     {
         "id": 16,
-        "name": "pidgey",
+        "name": "roucool",
         "types": [
             "normal",
             "flying"
@@ -474,7 +474,7 @@
     },
     {
         "id": 17,
-        "name": "pidgeotto",
+        "name": "roucoups",
         "types": [
             "normal",
             "flying"
@@ -504,7 +504,7 @@
     },
     {
         "id": 18,
-        "name": "pidgeot",
+        "name": "roucarnage",
         "types": [
             "normal",
             "flying"
@@ -563,7 +563,7 @@
     },
     {
         "id": 20,
-        "name": "raticate",
+        "name": "rattatac",
         "types": [
             "normal"
         ],
@@ -592,7 +592,7 @@
     },
     {
         "id": 21,
-        "name": "spearow",
+        "name": "piafabec",
         "types": [
             "normal",
             "flying"
@@ -622,7 +622,7 @@
     },
     {
         "id": 22,
-        "name": "fearow",
+        "name": "rapasdepic",
         "types": [
             "normal",
             "flying"
@@ -652,7 +652,7 @@
     },
     {
         "id": 23,
-        "name": "ekans",
+        "name": "abo",
         "types": [
             "poison"
         ],
@@ -768,7 +768,7 @@
     },
     {
         "id": 27,
-        "name": "sandshrew",
+        "name": "sabelette",
         "types": [
             "ground"
         ],
@@ -797,7 +797,7 @@
     },
     {
         "id": 28,
-        "name": "sandslash",
+        "name": "sablaireau",
         "types": [
             "ground"
         ],
@@ -826,7 +826,7 @@
     },
     {
         "id": 29,
-        "name": "nidoran-f",
+        "name": "nidoran♀",
         "types": [
             "poison"
         ],
@@ -914,7 +914,7 @@
     },
     {
         "id": 32,
-        "name": "nidoran-m",
+        "name": "nidoran♂",
         "types": [
             "poison"
         ],
@@ -1002,7 +1002,7 @@
     },
     {
         "id": 35,
-        "name": "clefairy",
+        "name": "mélofée",
         "types": [
             "fairy"
         ],
@@ -1031,7 +1031,7 @@
     },
     {
         "id": 36,
-        "name": "clefable",
+        "name": "mélodelfe",
         "types": [
             "fairy"
         ],
@@ -1060,7 +1060,7 @@
     },
     {
         "id": 37,
-        "name": "vulpix",
+        "name": "goupix",
         "types": [
             "fire"
         ],
@@ -1089,7 +1089,7 @@
     },
     {
         "id": 38,
-        "name": "ninetales",
+        "name": "feunard",
         "types": [
             "fire"
         ],
@@ -1118,7 +1118,7 @@
     },
     {
         "id": 39,
-        "name": "jigglypuff",
+        "name": "rondoudou",
         "types": [
             "normal",
             "fairy"
@@ -1148,7 +1148,7 @@
     },
     {
         "id": 40,
-        "name": "wigglytuff",
+        "name": "grodoudou",
         "types": [
             "normal",
             "fairy"
@@ -1178,7 +1178,7 @@
     },
     {
         "id": 41,
-        "name": "zubat",
+        "name": "nosferapti",
         "types": [
             "poison",
             "flying"
@@ -1208,7 +1208,7 @@
     },
     {
         "id": 42,
-        "name": "golbat",
+        "name": "nosferalto",
         "types": [
             "poison",
             "flying"
@@ -1238,7 +1238,7 @@
     },
     {
         "id": 43,
-        "name": "oddish",
+        "name": "mystherbe",
         "types": [
             "grass",
             "poison"
@@ -1268,7 +1268,7 @@
     },
     {
         "id": 44,
-        "name": "gloom",
+        "name": "ortide",
         "types": [
             "grass",
             "poison"
@@ -1298,7 +1298,7 @@
     },
     {
         "id": 45,
-        "name": "vileplume",
+        "name": "rafflesia",
         "types": [
             "grass",
             "poison"
@@ -1388,7 +1388,7 @@
     },
     {
         "id": 48,
-        "name": "venonat",
+        "name": "mimitoss",
         "types": [
             "bug",
             "poison"
@@ -1418,7 +1418,7 @@
     },
     {
         "id": 49,
-        "name": "venomoth",
+        "name": "aéromite",
         "types": [
             "bug",
             "poison"
@@ -1448,7 +1448,7 @@
     },
     {
         "id": 50,
-        "name": "diglett",
+        "name": "taupiqueur",
         "types": [
             "ground"
         ],
@@ -1477,7 +1477,7 @@
     },
     {
         "id": 51,
-        "name": "dugtrio",
+        "name": "triopikeur",
         "types": [
             "ground"
         ],
@@ -1506,7 +1506,7 @@
     },
     {
         "id": 52,
-        "name": "meowth",
+        "name": "miaouss",
         "types": [
             "normal"
         ],
@@ -1564,7 +1564,7 @@
     },
     {
         "id": 54,
-        "name": "psyduck",
+        "name": "psykokwak",
         "types": [
             "water"
         ],
@@ -1593,7 +1593,7 @@
     },
     {
         "id": 55,
-        "name": "golduck",
+        "name": "akwakwak",
         "types": [
             "water"
         ],
@@ -1622,7 +1622,7 @@
     },
     {
         "id": 56,
-        "name": "mankey",
+        "name": "férosinge",
         "types": [
             "fighting"
         ],
@@ -1651,7 +1651,7 @@
     },
     {
         "id": 57,
-        "name": "primeape",
+        "name": "colossinge",
         "types": [
             "fighting"
         ],
@@ -1680,7 +1680,7 @@
     },
     {
         "id": 58,
-        "name": "growlithe",
+        "name": "caninos",
         "types": [
             "fire"
         ],
@@ -1709,7 +1709,7 @@
     },
     {
         "id": 59,
-        "name": "arcanine",
+        "name": "arcanin",
         "types": [
             "fire"
         ],
@@ -1738,7 +1738,7 @@
     },
     {
         "id": 60,
-        "name": "poliwag",
+        "name": "ptitard",
         "types": [
             "water"
         ],
@@ -1767,7 +1767,7 @@
     },
     {
         "id": 61,
-        "name": "poliwhirl",
+        "name": "têtarte",
         "types": [
             "water"
         ],
@@ -1796,7 +1796,7 @@
     },
     {
         "id": 62,
-        "name": "poliwrath",
+        "name": "tartard",
         "types": [
             "water",
             "fighting"
@@ -1913,7 +1913,7 @@
     },
     {
         "id": 66,
-        "name": "machop",
+        "name": "machoc",
         "types": [
             "fighting"
         ],
@@ -1942,7 +1942,7 @@
     },
     {
         "id": 67,
-        "name": "machoke",
+        "name": "machopeur",
         "types": [
             "fighting"
         ],
@@ -1971,7 +1971,7 @@
     },
     {
         "id": 68,
-        "name": "machamp",
+        "name": "mackogneur",
         "types": [
             "fighting"
         ],
@@ -2000,7 +2000,7 @@
     },
     {
         "id": 69,
-        "name": "bellsprout",
+        "name": "chétiflor",
         "types": [
             "grass",
             "poison"
@@ -2030,7 +2030,7 @@
     },
     {
         "id": 70,
-        "name": "weepinbell",
+        "name": "boustiflor",
         "types": [
             "grass",
             "poison"
@@ -2060,7 +2060,7 @@
     },
     {
         "id": 71,
-        "name": "victreebel",
+        "name": "empiflor",
         "types": [
             "grass",
             "poison"
@@ -2150,7 +2150,7 @@
     },
     {
         "id": 74,
-        "name": "geodude",
+        "name": "racaillou",
         "types": [
             "rock",
             "ground"
@@ -2180,7 +2180,7 @@
     },
     {
         "id": 75,
-        "name": "graveler",
+        "name": "gravalanch",
         "types": [
             "rock",
             "ground"
@@ -2210,7 +2210,7 @@
     },
     {
         "id": 76,
-        "name": "golem",
+        "name": "grolem",
         "types": [
             "rock",
             "ground"
@@ -2269,7 +2269,7 @@
     },
     {
         "id": 78,
-        "name": "rapidash",
+        "name": "galopa",
         "types": [
             "fire"
         ],
@@ -2298,7 +2298,7 @@
     },
     {
         "id": 79,
-        "name": "slowpoke",
+        "name": "ramoloss",
         "types": [
             "water",
             "psychic"
@@ -2328,7 +2328,7 @@
     },
     {
         "id": 80,
-        "name": "slowbro",
+        "name": "flagadoss",
         "types": [
             "water",
             "psychic"
@@ -2358,7 +2358,7 @@
     },
     {
         "id": 81,
-        "name": "magnemite",
+        "name": "magnéti",
         "types": [
             "electric",
             "steel"
@@ -2388,7 +2388,7 @@
     },
     {
         "id": 82,
-        "name": "magneton",
+        "name": "magnéton",
         "types": [
             "electric",
             "steel"
@@ -2418,7 +2418,7 @@
     },
     {
         "id": 83,
-        "name": "farfetchd",
+        "name": "canarticho",
         "types": [
             "normal",
             "flying"
@@ -2508,7 +2508,7 @@
     },
     {
         "id": 86,
-        "name": "seel",
+        "name": "otaria",
         "types": [
             "water"
         ],
@@ -2537,7 +2537,7 @@
     },
     {
         "id": 87,
-        "name": "dewgong",
+        "name": "lamantine",
         "types": [
             "water",
             "ice"
@@ -2567,7 +2567,7 @@
     },
     {
         "id": 88,
-        "name": "grimer",
+        "name": "tadmorv",
         "types": [
             "poison"
         ],
@@ -2596,7 +2596,7 @@
     },
     {
         "id": 89,
-        "name": "muk",
+        "name": "grotadmorv",
         "types": [
             "poison"
         ],
@@ -2625,7 +2625,7 @@
     },
     {
         "id": 90,
-        "name": "shellder",
+        "name": "kokiyas",
         "types": [
             "water"
         ],
@@ -2654,7 +2654,7 @@
     },
     {
         "id": 91,
-        "name": "cloyster",
+        "name": "crustabri",
         "types": [
             "water",
             "ice"
@@ -2684,7 +2684,7 @@
     },
     {
         "id": 92,
-        "name": "gastly",
+        "name": "fantominus",
         "types": [
             "ghost",
             "poison"
@@ -2714,7 +2714,7 @@
     },
     {
         "id": 93,
-        "name": "haunter",
+        "name": "spectrum",
         "types": [
             "ghost",
             "poison"
@@ -2744,7 +2744,7 @@
     },
     {
         "id": 94,
-        "name": "gengar",
+        "name": "ectoplasma",
         "types": [
             "ghost",
             "poison"
@@ -2804,7 +2804,7 @@
     },
     {
         "id": 96,
-        "name": "drowzee",
+        "name": "soporifik",
         "types": [
             "psychic"
         ],
@@ -2833,7 +2833,7 @@
     },
     {
         "id": 97,
-        "name": "hypno",
+        "name": "hypnomade",
         "types": [
             "psychic"
         ],
@@ -2891,7 +2891,7 @@
     },
     {
         "id": 99,
-        "name": "kingler",
+        "name": "krabboss",
         "types": [
             "water"
         ],
@@ -2920,7 +2920,7 @@
     },
     {
         "id": 100,
-        "name": "voltorb",
+        "name": "voltorbe",
         "types": [
             "electric"
         ],
@@ -2949,7 +2949,7 @@
     },
     {
         "id": 101,
-        "name": "electrode",
+        "name": "électrode",
         "types": [
             "electric"
         ],
@@ -2978,7 +2978,7 @@
     },
     {
         "id": 102,
-        "name": "exeggcute",
+        "name": "noeunoeuf",
         "types": [
             "grass",
             "psychic"
@@ -3008,7 +3008,7 @@
     },
     {
         "id": 103,
-        "name": "exeggutor",
+        "name": "noadkoko",
         "types": [
             "grass",
             "psychic"
@@ -3038,7 +3038,7 @@
     },
     {
         "id": 104,
-        "name": "cubone",
+        "name": "osselait",
         "types": [
             "ground"
         ],
@@ -3067,7 +3067,7 @@
     },
     {
         "id": 105,
-        "name": "marowak",
+        "name": "ossatueur",
         "types": [
             "ground"
         ],
@@ -3096,7 +3096,7 @@
     },
     {
         "id": 106,
-        "name": "hitmonlee",
+        "name": "kicklee",
         "types": [
             "fighting"
         ],
@@ -3125,7 +3125,7 @@
     },
     {
         "id": 107,
-        "name": "hitmonchan",
+        "name": "tygnon",
         "types": [
             "fighting"
         ],
@@ -3154,7 +3154,7 @@
     },
     {
         "id": 108,
-        "name": "lickitung",
+        "name": "excelangue",
         "types": [
             "normal"
         ],
@@ -3183,7 +3183,7 @@
     },
     {
         "id": 109,
-        "name": "koffing",
+        "name": "smogo",
         "types": [
             "poison"
         ],
@@ -3212,7 +3212,7 @@
     },
     {
         "id": 110,
-        "name": "weezing",
+        "name": "smogogo",
         "types": [
             "poison"
         ],
@@ -3241,7 +3241,7 @@
     },
     {
         "id": 111,
-        "name": "rhyhorn",
+        "name": "rhinocorne",
         "types": [
             "ground",
             "rock"
@@ -3271,7 +3271,7 @@
     },
     {
         "id": 112,
-        "name": "rhydon",
+        "name": "rhinoféros",
         "types": [
             "ground",
             "rock"
@@ -3301,7 +3301,7 @@
     },
     {
         "id": 113,
-        "name": "chansey",
+        "name": "leveinard",
         "types": [
             "normal"
         ],
@@ -3330,7 +3330,7 @@
     },
     {
         "id": 114,
-        "name": "tangela",
+        "name": "saquedeneu",
         "types": [
             "grass"
         ],
@@ -3359,7 +3359,7 @@
     },
     {
         "id": 115,
-        "name": "kangaskhan",
+        "name": "kangourex",
         "types": [
             "normal"
         ],
@@ -3388,7 +3388,7 @@
     },
     {
         "id": 116,
-        "name": "horsea",
+        "name": "hypotrempe",
         "types": [
             "water"
         ],
@@ -3417,7 +3417,7 @@
     },
     {
         "id": 117,
-        "name": "seadra",
+        "name": "hypocéan",
         "types": [
             "water"
         ],
@@ -3446,7 +3446,7 @@
     },
     {
         "id": 118,
-        "name": "goldeen",
+        "name": "poissirène",
         "types": [
             "water"
         ],
@@ -3475,7 +3475,7 @@
     },
     {
         "id": 119,
-        "name": "seaking",
+        "name": "poissoroy",
         "types": [
             "water"
         ],
@@ -3504,7 +3504,7 @@
     },
     {
         "id": 120,
-        "name": "staryu",
+        "name": "stari",
         "types": [
             "water"
         ],
@@ -3533,7 +3533,7 @@
     },
     {
         "id": 121,
-        "name": "starmie",
+        "name": "staross",
         "types": [
             "water",
             "psychic"
@@ -3563,7 +3563,7 @@
     },
     {
         "id": 122,
-        "name": "mr-mime",
+        "name": "m. mime",
         "types": [
             "psychic",
             "fairy"
@@ -3593,7 +3593,7 @@
     },
     {
         "id": 123,
-        "name": "scyther",
+        "name": "insécateur",
         "types": [
             "bug",
             "flying"
@@ -3623,7 +3623,7 @@
     },
     {
         "id": 124,
-        "name": "jynx",
+        "name": "lippoutou",
         "types": [
             "ice",
             "psychic"
@@ -3653,7 +3653,7 @@
     },
     {
         "id": 125,
-        "name": "electabuzz",
+        "name": "élektek",
         "types": [
             "electric"
         ],
@@ -3711,7 +3711,7 @@
     },
     {
         "id": 127,
-        "name": "pinsir",
+        "name": "scarabrute",
         "types": [
             "bug"
         ],
@@ -3769,7 +3769,7 @@
     },
     {
         "id": 129,
-        "name": "magikarp",
+        "name": "magicarpe",
         "types": [
             "water"
         ],
@@ -3798,7 +3798,7 @@
     },
     {
         "id": 130,
-        "name": "gyarados",
+        "name": "léviator",
         "types": [
             "water",
             "flying"
@@ -3828,7 +3828,7 @@
     },
     {
         "id": 131,
-        "name": "lapras",
+        "name": "lokhlass",
         "types": [
             "water",
             "ice"
@@ -3858,7 +3858,7 @@
     },
     {
         "id": 132,
-        "name": "ditto",
+        "name": "métamorph",
         "types": [
             "normal"
         ],
@@ -3884,7 +3884,7 @@
     },
     {
         "id": 133,
-        "name": "eevee",
+        "name": "évoli",
         "types": [
             "normal"
         ],
@@ -3913,7 +3913,7 @@
     },
     {
         "id": 134,
-        "name": "vaporeon",
+        "name": "aquali",
         "types": [
             "water"
         ],
@@ -3942,7 +3942,7 @@
     },
     {
         "id": 135,
-        "name": "jolteon",
+        "name": "voltali",
         "types": [
             "electric"
         ],
@@ -3971,7 +3971,7 @@
     },
     {
         "id": 136,
-        "name": "flareon",
+        "name": "pyroli",
         "types": [
             "fire"
         ],
@@ -4029,7 +4029,7 @@
     },
     {
         "id": 138,
-        "name": "omanyte",
+        "name": "amonita",
         "types": [
             "rock",
             "water"
@@ -4059,7 +4059,7 @@
     },
     {
         "id": 139,
-        "name": "omastar",
+        "name": "amonistar",
         "types": [
             "rock",
             "water"
@@ -4149,7 +4149,7 @@
     },
     {
         "id": 142,
-        "name": "aerodactyl",
+        "name": "ptéra",
         "types": [
             "rock",
             "flying"
@@ -4179,7 +4179,7 @@
     },
     {
         "id": 143,
-        "name": "snorlax",
+        "name": "ronflex",
         "types": [
             "normal"
         ],
@@ -4208,7 +4208,7 @@
     },
     {
         "id": 144,
-        "name": "articuno",
+        "name": "artikodin",
         "types": [
             "ice",
             "flying"
@@ -4238,7 +4238,7 @@
     },
     {
         "id": 145,
-        "name": "zapdos",
+        "name": "électhor",
         "types": [
             "electric",
             "flying"
@@ -4268,7 +4268,7 @@
     },
     {
         "id": 146,
-        "name": "moltres",
+        "name": "sulfura",
         "types": [
             "fire",
             "flying"
@@ -4298,7 +4298,7 @@
     },
     {
         "id": 147,
-        "name": "dratini",
+        "name": "minidraco",
         "types": [
             "dragon"
         ],
@@ -4327,7 +4327,7 @@
     },
     {
         "id": 148,
-        "name": "dragonair",
+        "name": "draco",
         "types": [
             "dragon"
         ],
@@ -4356,7 +4356,7 @@
     },
     {
         "id": 149,
-        "name": "dragonite",
+        "name": "dracolosse",
         "types": [
             "dragon",
             "flying"
