@@ -8,6 +8,7 @@ from states.state import State
 from models.player import Player
 from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
+from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
                     YELLOW, AVAILABLE_POKEMON_IDS)
 from config import GAME_FONT
@@ -161,6 +162,7 @@ class SelectionState(State):
         # Si deja selectionne par ce joueur, le deselectionner
         if pokemon_id in current_list:
             current_list.remove(pokemon_id)
+            sound_manager.play_select()
             for card in self.cards:
                 if card.pokemon_id == pokemon_id:
                     card.is_selected = False
@@ -170,6 +172,7 @@ class SelectionState(State):
         if len(current_list) >= MAX_TEAM_SIZE:
             return
 
+        sound_manager.play_select()
         current_list.append(pokemon_id)
         for card in self.cards:
             if card.pokemon_id == pokemon_id:
@@ -182,6 +185,8 @@ class SelectionState(State):
         # Il faut au moins 1 Pokemon
         if len(current_list) == 0:
             return
+
+        sound_manager.play_select()
 
         mode = self.state_manager.shared_data.get("mode", "pvp")
 

@@ -8,7 +8,7 @@ from models.type_chart import TypeChart
 from states.state_manager import StateManager
 from states.title_state import TitleState
 from states.selection_state import SelectionState
-from states.battle_state import BattleState
+from states.battle.battle_state import BattleState
 from states.result_state import ResultState
 
 
