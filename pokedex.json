@@ -30,7 +30,48 @@
             "defense": 40,
             "attack": 50,
             "hp": 100
+        },
+        {
+            "id": 30,
+            "name": "nidorina",
+            "type": [
+                "poison"
+            ],
+            "defense": 72,
+            "attack": 67,
+            "hp": 130
+        },
+        {
+            "id": 20,
+            "name": "rattatac",
+            "type": [
+                "normal"
+            ],
+            "defense": 65,
+            "attack": 86,
+            "hp": 115
+        },
+        {
+            "id": 113,
+            "name": "leveinard",
+            "type": [
+                "normal"
+            ],
+            "defense": 10,
+            "attack": 10,
+            "hp": 310
+        },
+        {
+            "id": 6,
+            "name": "dracaufeu",
+            "type": [
+                "fire",
+                "flying"
+            ],
+            "defense": 83,
+            "attack": 89,
+            "hp": 138
         }
     ],
-    "count": 3
+    "count": 7
 }

@@ -10,6 +10,7 @@ from states.title_state import TitleState
 from states.selection_state import SelectionState
 from states.battle.battle_state import BattleState
 from states.result_state import ResultState
+from states.starter_selection_state import StarterSelectionState
 
 
 class Game:
@@ -32,7 +33,8 @@ class Game:
         self.state_manager.register_state("selection", SelectionState(self.state_manager, self.api_client))
         self.state_manager.register_state("battle", BattleState(self.state_manager, self.type_chart))
         self.state_manager.register_state("result", ResultState(self.state_manager))
-        self.state_manager.change_state("title")
+        self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
+        self.state_manager.change_state("starter_selection")
 
     def run(self):
         """Boucle principale du jeu."""
