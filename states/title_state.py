@@ -42,12 +42,17 @@ class TitleState(State):
 
         self.buttons = [
             Button(
+            center_x - btn_width // 2, 250,
+            btn_width, btn_height,
+            "Nouvelle Aventure"
+            ),
+            Button(
                 center_x - btn_width // 2, 320,
                 btn_width, btn_height,
                 "Joueur vs Joueur"
             ),
             Button(
-                center_x - btn_width // 2, 400,
+                center_x - btn_width // 2, 390,
                 btn_width, btn_height,
                 "Joueur vs IA"
             ),
@@ -92,9 +97,14 @@ class TitleState(State):
                 else:
                     if self.buttons[0].check_click(mouse_pos, True):
                         sound_manager.play_select()
+                        self.state_manager.change_state("starter_selection")
+                    # Joueur vs Joueur
+                    elif self.buttons[1].check_click(mouse_pos, True):
+                        sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"
                         self.state_manager.change_state("selection")
-                    elif self.buttons[1].check_click(mouse_pos, True):
+                    # Joueur vs IA
+                    elif self.buttons[2].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self._show_difficulty = True
 
