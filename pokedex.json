@@ -1,0 +1,36 @@
+{
+    "pokemon": [
+        {
+            "id": 43,
+            "name": "mystherbe",
+            "type": [
+                "grass",
+                "poison"
+            ],
+            "defense": 60,
+            "attack": 55,
+            "hp": 105
+        },
+        {
+            "id": 9,
+            "name": "tortank",
+            "type": [
+                "water"
+            ],
+            "defense": 105,
+            "attack": 88,
+            "hp": 139
+        },
+        {
+            "id": 52,
+            "name": "miaouss",
+            "type": [
+                "normal"
+            ],
+            "defense": 40,
+            "attack": 50,
+            "hp": 100
+        }
+    ],
+    "count": 3
+}

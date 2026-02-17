@@ -3,6 +3,7 @@
 import random
 
 from battle.damage_calculator import DamageCalculator
+from models.combat import Combat
 
 
 class Battle:
@@ -23,6 +24,7 @@ class Battle:
         self.player2 = player2
         self.type_chart = type_chart
         self.damage_calc = DamageCalculator(type_chart)
+        self.combat = Combat(type_chart)
         self.battle_type = battle_type
 
         # Pokemon actifs sur le terrain
@@ -138,6 +140,17 @@ class Battle:
                     return messages
 
         return messages
+
+    def end_battle(self):
+        """Termine le combat et enregistre les Pokemon dans le Pokedex."""
+        if self.is_over and self.winner and self.loser:
+            # Enregistrer tous les Pokemon rencontres dans le Pokedex du gagnant
+            for pokemon in self.loser.team:
+                self.combat.save_to_pokedex(pokemon)
+            
+            # Enregistrer aussi les Pokemon du gagnant (auto-enregistrement)
+            for pokemon in self.winner.team:
+                self.combat.save_to_pokedex(pokemon)
 
     def get_fainted_player(self):
         """Retourne le numero du joueur dont le Pokemon actif est KO (1 ou 2), ou None."""

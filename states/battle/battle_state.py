@@ -212,6 +212,10 @@ class BattleState(BattleRenderer, BattleInput, BattleLogic, BattleAnimation, Sta
     def _handle_result(self, event):
         """Gere l'ecran de resultat."""
         if event.key == pygame.K_RETURN:
+            # Enregistrer les Pokemon dans le Pokedex AVANT de passer à l'écran de résultat
+            if self.battle.is_over:
+                self.battle.end_battle()
+            
             # Manon : passer le Player gagnant + un Pokemon pour l'affichage
             self.state_manager.shared_data["winner_player"] = self.battle.winner
             self.state_manager.shared_data["loser_player"] = self.battle.loser
