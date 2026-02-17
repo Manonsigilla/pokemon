@@ -4,6 +4,7 @@ import pygame
 
 from states.state import State
 from ui.button import Button
+from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BG_DARK, YELLOW, RED, BLUE, get_font)
 
@@ -33,6 +34,7 @@ class TitleState(State):
 
     def enter(self):
         """Cree les boutons du menu."""
+        sound_manager.play_music("pokemontheme.mp3")
         self._show_difficulty = False
         center_x = SCREEN_WIDTH // 2
         btn_width = 300
@@ -89,9 +91,11 @@ class TitleState(State):
                     self._handle_difficulty_click(mouse_pos)
                 else:
                     if self.buttons[0].check_click(mouse_pos, True):
+                        sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"
                         self.state_manager.change_state("selection")
                     elif self.buttons[1].check_click(mouse_pos, True):
+                        sound_manager.play_select()
                         self._show_difficulty = True
 
             if event.type == pygame.KEYDOWN:
@@ -99,9 +103,11 @@ class TitleState(State):
                     self._handle_difficulty_key(event)
                 else:
                     if event.key == pygame.K_1:
+                        sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"
                         self.state_manager.change_state("selection")
                     elif event.key == pygame.K_2:
+                        sound_manager.play_select()
                         self._show_difficulty = True
 
     def _handle_difficulty_click(self, mouse_pos):
@@ -109,6 +115,7 @@ class TitleState(State):
         difficulties = ["facile", "normal", "difficile"]
         for i, button in enumerate(self.difficulty_buttons):
             if button.check_click(mouse_pos, True):
+                sound_manager.play_select()
                 self.state_manager.shared_data["mode"] = "pvia"
                 self.state_manager.shared_data["ai_difficulty"] = difficulties[i]
                 self.state_manager.change_state("selection")
@@ -120,6 +127,7 @@ class TitleState(State):
         key_map = {pygame.K_1: 0, pygame.K_2: 1, pygame.K_3: 2}
 
         if event.key in key_map:
+            sound_manager.play_select()
             idx = key_map[event.key]
             self.state_manager.shared_data["mode"] = "pvia"
             self.state_manager.shared_data["ai_difficulty"] = difficulties[idx]
