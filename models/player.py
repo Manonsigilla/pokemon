@@ -1,6 +1,5 @@
 """Classe representant un dresseur Pokemon."""
 
-
 class Player:
     """Dresseur avec une equipe de Pokemon."""
 
@@ -59,3 +58,11 @@ class Player:
     def __str__(self):
         alive = len(self.get_alive_pokemon())
         return f"{self.name} ({alive}/{len(self.team)} Pokemon)"
+    def save_team_to_pokedex(self, combat):
+        """Enregistre tous les Pokemon de l'equipe dans le Pokedex.
+        
+        Args:
+            combat (Combat): Instance de la classe Combat
+        """
+        for pokemon in self.team:
+            combat.save_to_pokedex(pokemon)

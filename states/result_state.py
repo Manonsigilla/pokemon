@@ -4,6 +4,7 @@ import pygame
 
 from states.state import State
 from ui.sprite_loader import SpriteLoader
+from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE,
                     BG_DARK, YELLOW, GREEN, get_font)
 
@@ -40,6 +41,7 @@ class ResultState(State):
 
     def enter(self):
         """Recupere le gagnant depuis les donnees partagees."""
+        sound_manager.play_victory()
         self.winner = self.state_manager.shared_data.get("winner")
         if self.winner:
             try:
