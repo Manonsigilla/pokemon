@@ -3,7 +3,8 @@
 import pygame
 
 from config import (BLACK, WHITE, BORDER_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT,
-                    HP_GREEN, HP_YELLOW, HP_RED, TYPE_COLORS, DARK_GRAY)
+                    HP_GREEN, HP_YELLOW, HP_RED, TYPE_COLORS, DARK_GRAY,
+                    render_fitted_text)
 
 
 class TeamMenu:
@@ -89,12 +90,12 @@ class TeamMenu:
         overlay.set_alpha(240)
         surface.blit(overlay, (0, 0))
 
-        # Titre
+        # Titre — adapte a la largeur de l'ecran
         if self.allow_cancel:
             title_text = "Choisissez un Pokemon"
         else:
             title_text = "Choisissez le Pokemon suivant !"
-        title = self.font_title.render(title_text, True, WHITE)
+        title = render_fitted_text(title_text, SCREEN_WIDTH - 40, 36, WHITE, min_size=20)
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         surface.blit(title, (title_x, 20))
 
@@ -119,22 +120,25 @@ class TeamMenu:
             pygame.draw.rect(surface, bg_color, slot_rect, border_radius=8)
             pygame.draw.rect(surface, BORDER_COLOR, slot_rect, 2, border_radius=8)
 
-            # Nom du Pokemon
-            name_text = self.font_name.render(poke.name, True, WHITE)
+            # Nom du Pokemon — adapte a 120px max
+            name_text = render_fitted_text(poke.name, 120, 28, WHITE, min_size=16)
             surface.blit(name_text, (slot_rect.x + 15, slot_rect.y + 8))
 
             # Niveau
             level_text = self.font_info.render(f"Nv.{poke.level}", True, (200, 200, 200))
             surface.blit(level_text, (slot_rect.x + 15, slot_rect.y + 35))
 
-            # Types
+            # Types — adaptes a leur badge
             type_x = slot_rect.x + 100
             for t in poke.types:
                 type_color = TYPE_COLORS.get(t, (150, 150, 150))
                 type_label = self.font_info.render(t.title(), True, WHITE)
-                tag_rect = pygame.Rect(type_x, slot_rect.y + 35, type_label.get_width() + 10, 20)
+                tag_width = min(type_label.get_width() + 10, 80)
+                tag_rect = pygame.Rect(type_x, slot_rect.y + 35, tag_width, 20)
                 pygame.draw.rect(surface, type_color, tag_rect, border_radius=4)
-                surface.blit(type_label, (type_x + 5, slot_rect.y + 37))
+
+                type_fitted = render_fitted_text(t.title(), tag_width - 6, 22, WHITE, min_size=12)
+                surface.blit(type_fitted, (type_x + 3, slot_rect.y + 37))
                 type_x += tag_rect.width + 5
 
             # Barre de PV
@@ -171,14 +175,9 @@ class TeamMenu:
 
         # Instructions
         if self.allow_cancel:
-            hint = self.font_info.render(
-                "Haut/Bas = naviguer | Entree = choisir | Echap = annuler",
-                True, (150, 150, 150)
-            )
+            hint_str = "Haut/Bas = naviguer | Entree = choisir | Echap = annuler"
         else:
-            hint = self.font_info.render(
-                "Haut/Bas = naviguer | Entree = choisir",
-                True, (150, 150, 150)
-            )
+            hint_str = "Haut/Bas = naviguer | Entree = choisir"
+        hint = render_fitted_text(hint_str, SCREEN_WIDTH - 40, 22, (150, 150, 150), min_size=14)
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, SCREEN_HEIGHT - 30))

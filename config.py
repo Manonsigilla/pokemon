@@ -109,3 +109,38 @@ def get_font(size):
     if GAME_FONT:
         return pygame.font.Font(GAME_FONT, size)
     return pygame.font.Font(None, size)
+
+def fit_text(text, max_width, max_size, min_size=8):
+    """Trouve la plus grande taille de police pour que le texte rentre dans max_width.
+    
+    Args:
+        text (str): Le texte à afficher
+        max_width (int): Largeur maximale disponible en pixels
+        max_size (int): Taille de police maximale souhaitée
+        min_size (int): Taille de police minimale (défaut 8)
+    
+    Returns:
+        pygame.font.Font: La police adaptée
+    """
+    for size in range(max_size, min_size - 1, -1):
+        font = get_font(size)
+        if font.size(text)[0] <= max_width:
+            return font
+    return get_font(min_size)
+
+
+def render_fitted_text(text, max_width, max_size, color, min_size=8):
+    """Rend un texte avec une taille de police adaptée automatiquement.
+    
+    Args:
+        text (str): Le texte à afficher
+        max_width (int): Largeur maximale disponible en pixels
+        max_size (int): Taille de police maximale souhaitée
+        color (tuple): Couleur RGB du texte
+        min_size (int): Taille de police minimale (défaut 8)
+    
+    Returns:
+        pygame.Surface: Le texte rendu
+    """
+    font = fit_text(text, max_width, max_size, min_size)
+    return font.render(text, True, color)

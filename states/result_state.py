@@ -6,7 +6,7 @@ from states.state import State
 from ui.sprite_loader import SpriteLoader
 from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE,
-                    BG_DARK, YELLOW, GREEN, get_font)
+                    BG_DARK, YELLOW, GREEN, get_font, render_fitted_text)
 
 
 class ResultState(State):
@@ -18,7 +18,6 @@ class ResultState(State):
         self.winner = None
         self.winner_sprite = None
         self._font_title = None
-        self._font_name = None
         self._font_info = None
 
     @property
@@ -26,12 +25,6 @@ class ResultState(State):
         if self._font_title is None:
             self._font_title = get_font(28)
         return self._font_title
-
-    @property
-    def font_name(self):
-        if self._font_name is None:
-            self._font_name = get_font(18)
-        return self._font_name
 
     @property
     def font_info(self):
@@ -81,18 +74,17 @@ class ResultState(State):
             sprite_y = 120
             surface.blit(self.winner_sprite, (sprite_x, sprite_y))
 
-        # Nom du gagnant - utiliser une font plus petite pour que ca rentre
-        name_text = self.font_name.render(
-            f"{self.winner.name} remporte le combat !", True, GREEN
+        # Nom du gagnant — adapte a la largeur de l'ecran
+        winner_str = f"{self.winner.name} remporte le combat !"
+        name_text = render_fitted_text(
+            winner_str, SCREEN_WIDTH - 20, 18, GREEN, min_size=12
         )
-        name_x = max(10, (SCREEN_WIDTH - name_text.get_width()) // 2)
+        name_x = (SCREEN_WIDTH - name_text.get_width()) // 2
         surface.blit(name_text, (name_x, 430))
 
-        # PV restants
-        hp_text = self.font_info.render(
-            f"PV restants : {self.winner.current_hp}/{self.winner.max_hp}",
-            True, WHITE
-        )
+        # PV restants — adapte aussi
+        hp_str = f"PV restants : {self.winner.current_hp}/{self.winner.max_hp}"
+        hp_text = render_fitted_text(hp_str, SCREEN_WIDTH - 40, 14, WHITE, min_size=10)
         hp_x = (SCREEN_WIDTH - hp_text.get_width()) // 2
         surface.blit(hp_text, (hp_x, 475))
 

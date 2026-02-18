@@ -22,7 +22,8 @@ from config import (
     YELLOW, 
     GREEN,
     BASE_DIR,
-    get_font
+    get_font,
+    render_fitted_text
 )
 
 
@@ -496,32 +497,26 @@ class StarterSelectionState(State):
             pygame.draw.line(surface, color, (0, y), (SCREEN_WIDTH, y))
     
     def _draw_animated_title(self, surface):
-        """Titre avec effet de pulsation."""
+        """Titre avec effet de pulsation — adapte a la largeur de l'ecran."""
         import math
         
         # Calculer l'offset de pulsation
         pulse_offset = int(math.sin(self.title_pulse) * 2)
         
-        title_text = self.font_title.render(
-            "Choisis ton Pokemon de depart !", 
-            True, 
-            YELLOW
-        )
+        title_str = "Choisis ton Pokemon de depart !"
+        max_width = SCREEN_WIDTH - 40  # 20px marge de chaque cote
+        
+        # Ombre portee — adaptee
+        shadow_text = render_fitted_text(title_str, max_width, 28, (30, 30, 30), min_size=14)
+        # Titre — adapte
+        title_text = render_fitted_text(title_str, max_width, 28, YELLOW, min_size=14)
         
         title_x = (SCREEN_WIDTH - title_text.get_width()) // 2
         title_y = 25 + pulse_offset
         
-        # Ombre portee
-        shadow_text = self.font_title.render(
-            "Choisis ton Pokemon de depart !", 
-            True, 
-            (30, 30, 30)
-        )
         surface.blit(shadow_text, (title_x + 3, title_y + 3))
-        
-        # Titre
         surface.blit(title_text, (title_x, title_y))
-    
+        
     def _draw_instructions(self, surface):
         """Instructions avec fond semi-transparent."""
         # Fond semi-transparent
