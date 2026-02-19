@@ -6,7 +6,8 @@ from states.state import State
 from ui.button import Button
 from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                    BG_DARK, YELLOW, RED, BLUE, get_font, render_fitted_text)
+                    BG_DARK, YELLOW, RED, BLUE, get_font,
+                    TITLE_LOGO, BTN_NORMAL, BTN_HOVER, BG_MENU)
 
 
 class TitleState(State):
@@ -19,6 +20,9 @@ class TitleState(State):
         self._subtitle_font = None
         self._show_difficulty = False
         self.difficulty_buttons = []
+        self.bg_image = None
+        # Image du logo
+        self.logo_image = None
 
     @property
     def title_font(self):
@@ -36,46 +40,88 @@ class TitleState(State):
         """Cree les boutons du menu."""
         sound_manager.play_music("pokemontheme.mp3")
         self._show_difficulty = False
+
+        # ============ FOND D'ECRAN ============
+        try:
+            bg = pygame.image.load(BG_MENU).convert()
+            self.bg_image = pygame.transform.scale(bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        except Exception as e:
+            print(f"[TitleState] Fond introuvable ({e}), fallback couleur")
+            self.bg_image = None
+
+        # ============ LOGO ============
+        try:
+            logo = pygame.image.load(TITLE_LOGO).convert_alpha()
+            # Adapter le logo a la largeur de l'ecran (max 600px, garde le ratio)
+            max_logo_width = 600
+            ratio = min(max_logo_width / logo.get_width(), 1.0)
+            new_w = int(logo.get_width() * ratio)
+            new_h = int(logo.get_height() * ratio)
+            self.logo_image = pygame.transform.scale(logo, (new_w, new_h))
+        except Exception as e:
+            print(f"[TitleState] Logo introuvable ({e}), fallback texte")
+            self.logo_image = None
+
+        # ============ BOUTONS PRINCIPAUX ============
         center_x = SCREEN_WIDTH // 2
         btn_width = 300
         btn_height = 60
 
+        # Calculer le Y de depart selon si le logo est present
+        if self.logo_image:
+            btn_start_y = 80 + self.logo_image.get_height() + 30
+        else:
+            btn_start_y = 250
+
         self.buttons = [
             Button(
-            center_x - btn_width // 2, 250,
-            btn_width, btn_height,
-            "Nouvelle Aventure"
+                center_x - btn_width // 2, btn_start_y,
+                btn_width, btn_height,
+                "Nouvelle Aventure",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
             Button(
-                center_x - btn_width // 2, 320,
+                center_x - btn_width // 2, btn_start_y + 70,
                 btn_width, btn_height,
-                "Joueur vs Joueur"
+                "Joueur vs Joueur",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
             Button(
-                center_x - btn_width // 2, 390,
+                center_x - btn_width // 2, btn_start_y + 140,
                 btn_width, btn_height,
-                "Joueur vs IA"
+                "Joueur vs IA",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
         ]
 
-        # Boutons de difficulte (affiches quand on clique "Joueur vs IA")
+        # ============ BOUTONS DIFFICULTE ============
         diff_btn_width = 200
         diff_btn_height = 50
+
         self.difficulty_buttons = [
             Button(
                 center_x - diff_btn_width // 2, 300,
                 diff_btn_width, diff_btn_height,
-                "Facile"
+                "Facile",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
             Button(
                 center_x - diff_btn_width // 2, 370,
                 diff_btn_width, diff_btn_height,
-                "Normal"
+                "Normal",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
             Button(
                 center_x - diff_btn_width // 2, 440,
                 diff_btn_width, diff_btn_height,
-                "Difficile"
+                "Difficile",
+                image_normal=BTN_NORMAL,
+                image_hover=BTN_HOVER
             ),
         ]
 
@@ -98,12 +144,10 @@ class TitleState(State):
                     if self.buttons[0].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self.state_manager.change_state("starter_selection")
-                    # Joueur vs Joueur
                     elif self.buttons[1].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"
                         self.state_manager.change_state("selection")
-                    # Joueur vs IA
                     elif self.buttons[2].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self._show_difficulty = True
@@ -150,51 +194,61 @@ class TitleState(State):
 
     def draw(self, surface):
         """Dessine le menu principal."""
-        surface.fill(BG_DARK)
-
-        max_width = SCREEN_WIDTH - 40
-
-        # Titre
-        title = render_fitted_text("POKEMON", max_width, 32, YELLOW, min_size=18)
-        title2 = render_fitted_text("BATTLE ARENA", max_width, 32, RED, min_size=18)
-        title_x = (SCREEN_WIDTH - title.get_width()) // 2
-        title2_x = (SCREEN_WIDTH - title2.get_width()) // 2
-        surface.blit(title, (title_x, 100))
-        surface.blit(title2, (title2_x, 160))
+        # Fond
+        if self.bg_image:
+            surface.blit(self.bg_image, (0, 0))
+            # Overlay sombre semi-transparent pour lisibilite du texte
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 120))
+            surface.blit(overlay, (0, 0))
+        else:
+            surface.fill(BG_DARK)
 
         if self._show_difficulty:
-            # Sous-titre difficulte
-            subtitle = render_fitted_text(
-                "Choisissez la difficulte", max_width, 14, WHITE, min_size=10
+            # ============ SOUS-MENU DIFFICULTE ============
+            # Logo en petit en haut
+            if self.logo_image:
+                small_logo = pygame.transform.scale(
+                    self.logo_image,
+                    (self.logo_image.get_width() // 2, self.logo_image.get_height() // 2)
+                )
+                logo_x = (SCREEN_WIDTH - small_logo.get_width()) // 2
+                surface.blit(small_logo, (logo_x, 20))
+
+            subtitle = self.subtitle_font.render(
+                "Choisissez la difficulte", True, WHITE
             )
             sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
             surface.blit(subtitle, (sub_x, 260))
 
-            # Boutons de difficulte
             for button in self.difficulty_buttons:
                 button.draw(surface)
 
-            # Instructions
-            hint = render_fitted_text(
-                "1 / 2 / 3 ou cliquez | Echap = retour", max_width, 14, (180, 180, 180), min_size=9
+            hint = self.subtitle_font.render(
+                "1 / 2 / 3 ou cliquez | Echap = retour", True, (180, 180, 180)
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 520))
         else:
-            # Sous-titre
-            subtitle = render_fitted_text(
-                "Choisissez votre mode de jeu", max_width, 14, WHITE, min_size=10
-            )
-            sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
-            surface.blit(subtitle, (sub_x, 270))
+            # ============ MENU PRINCIPAL ============
+            if self.logo_image:
+                # Afficher le logo image
+                logo_x = (SCREEN_WIDTH - self.logo_image.get_width()) // 2
+                surface.blit(self.logo_image, (logo_x, 80))
+            else:
+                # Fallback texte si pas d'image
+                title = self.title_font.render("POKEMON", True, YELLOW)
+                title2 = self.title_font.render("BATTLE ARENA", True, RED)
+                title_x = (SCREEN_WIDTH - title.get_width()) // 2
+                title2_x = (SCREEN_WIDTH - title2.get_width()) // 2
+                surface.blit(title, (title_x, 100))
+                surface.blit(title2, (title2_x, 160))
 
-            # Boutons
             for button in self.buttons:
                 button.draw(surface)
 
-            # Instructions
-            hint = render_fitted_text(
-                "ou appuyez sur 1 / 2", max_width, 14, (180, 180, 180), min_size=9
+            hint = self.subtitle_font.render(
+                "ou appuyez sur 1 / 2", True, (180, 180, 180)
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 500))

@@ -144,3 +144,12 @@ def render_fitted_text(text, max_width, max_size, color, min_size=8):
     """
     font = fit_text(text, max_width, max_size, min_size)
     return font.render(text, True, color)
+
+# --- Images UI (titre + boutons) ---
+TITLE_LOGO = os.path.join(IMAGES_DIR, "title_logo.png")
+BTN_NORMAL = os.path.join(IMAGES_DIR, "btn_normal.png")
+BTN_HOVER = os.path.join(IMAGES_DIR, "btn_hover.png")
+
+# --- Fonds d'ecran ---
+BG_MENU = os.path.join(IMAGES_DIR, "bg_menu.png")
+BG_SELECTION = os.path.join(IMAGES_DIR, "bg_selection.jpg")
