@@ -6,7 +6,7 @@ from states.state import State
 from ui.button import Button
 from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
-                    BG_DARK, YELLOW, RED, BLUE, get_font)
+                    BG_DARK, YELLOW, RED, BLUE, get_font, render_fitted_text)
 
 
 class TitleState(State):
@@ -152,9 +152,11 @@ class TitleState(State):
         """Dessine le menu principal."""
         surface.fill(BG_DARK)
 
+        max_width = SCREEN_WIDTH - 40
+
         # Titre
-        title = self.title_font.render("POKEMON", True, YELLOW)
-        title2 = self.title_font.render("BATTLE ARENA", True, RED)
+        title = render_fitted_text("POKEMON", max_width, 32, YELLOW, min_size=18)
+        title2 = render_fitted_text("BATTLE ARENA", max_width, 32, RED, min_size=18)
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         title2_x = (SCREEN_WIDTH - title2.get_width()) // 2
         surface.blit(title, (title_x, 100))
@@ -162,8 +164,8 @@ class TitleState(State):
 
         if self._show_difficulty:
             # Sous-titre difficulte
-            subtitle = self.subtitle_font.render(
-                "Choisissez la difficulte", True, WHITE
+            subtitle = render_fitted_text(
+                "Choisissez la difficulte", max_width, 14, WHITE, min_size=10
             )
             sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
             surface.blit(subtitle, (sub_x, 260))
@@ -173,15 +175,15 @@ class TitleState(State):
                 button.draw(surface)
 
             # Instructions
-            hint = self.subtitle_font.render(
-                "1 / 2 / 3 ou cliquez | Echap = retour", True, (180, 180, 180)
+            hint = render_fitted_text(
+                "1 / 2 / 3 ou cliquez | Echap = retour", max_width, 14, (180, 180, 180), min_size=9
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 520))
         else:
             # Sous-titre
-            subtitle = self.subtitle_font.render(
-                "Choisissez votre mode de jeu", True, WHITE
+            subtitle = render_fitted_text(
+                "Choisissez votre mode de jeu", max_width, 14, WHITE, min_size=10
             )
             sub_x = (SCREEN_WIDTH - subtitle.get_width()) // 2
             surface.blit(subtitle, (sub_x, 270))
@@ -191,8 +193,8 @@ class TitleState(State):
                 button.draw(surface)
 
             # Instructions
-            hint = self.subtitle_font.render(
-                "ou appuyez sur 1 / 2", True, (180, 180, 180)
+            hint = render_fitted_text(
+                "ou appuyez sur 1 / 2", max_width, 14, (180, 180, 180), min_size=9
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 500))

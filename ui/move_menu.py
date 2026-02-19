@@ -3,7 +3,8 @@
 import pygame
 
 from config import (BLACK, WHITE, BORDER_COLOR, MENU_BG,
-                    TYPE_COLORS, DARK_GRAY, LIGHT_GRAY, get_font)
+                    TYPE_COLORS, DARK_GRAY, LIGHT_GRAY, get_font,
+                    render_fitted_text)
 
 
 class MoveMenu:
@@ -14,14 +15,7 @@ class MoveMenu:
         self.moves = moves
         self.selected_index = 0
         self.visible = False
-        self._font_name = None
         self._font_info = None
-
-    @property
-    def font_name(self):
-        if self._font_name is None:
-            self._font_name = get_font(12)
-        return self._font_name
 
     @property
     def font_info(self):
@@ -84,17 +78,20 @@ class MoveMenu:
             # Bordure de cellule
             pygame.draw.rect(surface, BORDER_COLOR, cell_rect, 1)
 
-            # Nom de l'attaque
+            # Nom de l'attaque — adapte a la largeur de la cellule
             name_color = BLACK if move.has_pp() else DARK_GRAY
-            name_surface = self.font_name.render(move.display_name, True, name_color)
+            available_width = cell_width - 16  # 8px marge de chaque cote
+            name_surface = render_fitted_text(
+                move.display_name, available_width, 12, name_color, min_size=8
+            )
             surface.blit(name_surface, (cell_x + 8, cell_y + 8))
 
-            # Type et PP
+            # Type et PP — adaptes aussi
             type_text = move.move_type.title()
             pp_text = f"PP {move.current_pp}/{move.max_pp}"
 
-            type_surface = self.font_info.render(type_text, True, DARK_GRAY)
-            pp_surface = self.font_info.render(pp_text, True, DARK_GRAY)
+            type_surface = render_fitted_text(type_text, available_width, 10, DARK_GRAY, min_size=7)
+            pp_surface = render_fitted_text(pp_text, available_width, 10, DARK_GRAY, min_size=7)
 
             surface.blit(type_surface, (cell_x + 8, cell_y + 28))
             surface.blit(pp_surface, (cell_x + 8, cell_y + 42))

@@ -10,7 +10,7 @@ from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
 from ui.sound_manager import sound_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
-                    YELLOW, AVAILABLE_POKEMON_IDS)
+                    YELLOW, AVAILABLE_POKEMON_IDS, render_fitted_text)
 from config import GAME_FONT
 
 
@@ -277,6 +277,7 @@ class SelectionState(State):
             return
 
         # Titre avec compteur (Manon : compteur equipe)
+        max_title_width = SCREEN_WIDTH - 20
         current_list = self.selected[self.current_player]
         count = len(current_list)
 
@@ -286,8 +287,8 @@ class SelectionState(State):
             title_text = f"Joueur 2 - Choisissez votre equipe ! ({count}/{MAX_TEAM_SIZE})"
 
         # Angie : ombre sur le titre
-        title_shadow = self.font_title.render(title_text, True, (0, 0, 0))
-        title = self.font_title.render(title_text, True, YELLOW)
+        title_shadow = render_fitted_text(title_text, max_title_width, 25, (0, 0, 0), min_size=12)
+        title = render_fitted_text(title_text, max_title_width, 25, YELLOW, min_size=12)
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         surface.blit(title_shadow, (title_x + 2, 22))
         surface.blit(title, (title_x, 20))
@@ -314,7 +315,8 @@ class SelectionState(State):
         else:
             hint_text = "Cliquez pour selectionner | Survolez pour les stats | Echap = retour"
 
-        hint = self.font_info.render(hint_text, True, WHITE)
+        # Adapte a la largeur de l'ecran
+        hint = render_fitted_text(hint_text, SCREEN_WIDTH - 20, 20, WHITE, min_size=10)
         hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
         surface.blit(hint, (hint_x, SCREEN_HEIGHT - 32))
 
