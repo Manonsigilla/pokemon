@@ -153,3 +153,19 @@ BTN_HOVER = os.path.join(IMAGES_DIR, "btn_hover.png")
 # --- Fonds d'ecran ---
 BG_MENU = os.path.join(IMAGES_DIR, "bg_menu.png")
 BG_SELECTION = os.path.join(IMAGES_DIR, "bg_selection.jpg")
+
+# --- Boutons menu principal ---
+BTN_AVENTURE = os.path.join(IMAGES_DIR, "btn_aventure.png")
+BTN_AVENTURE_HOVER = os.path.join(IMAGES_DIR, "btn_aventure_hover.png")
+BTN_PVP = os.path.join(IMAGES_DIR, "btn_pvp.png")
+BTN_PVP_HOVER = os.path.join(IMAGES_DIR, "btn_pvp_hover.png")
+BTN_IA = os.path.join(IMAGES_DIR, "btn_ia.png")
+BTN_IA_HOVER = os.path.join(IMAGES_DIR, "btn_ia_hover.png")
+
+# --- Boutons difficulte ---
+BTN_FACILE = os.path.join(IMAGES_DIR, "btn_facile.png")
+BTN_FACILE_HOVER = os.path.join(IMAGES_DIR, "btn_facile_hover.png")
+BTN_NORMAL = os.path.join(IMAGES_DIR, "btn_normal.png")
+BTN_NORMAL_HOVER = os.path.join(IMAGES_DIR, "btn_normal_hover.png")
+BTN_DIFFICILE = os.path.join(IMAGES_DIR, "btn_difficile.png")
+BTN_DIFFICILE_HOVER = os.path.join(IMAGES_DIR, "btn_difficile_hover.png")
