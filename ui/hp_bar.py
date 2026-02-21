@@ -3,7 +3,7 @@
 import pygame
 
 from config import (BLACK, WHITE, HP_GREEN, HP_YELLOW, HP_RED,
-                    BORDER_COLOR, BG_LIGHT, get_font)
+                    BORDER_COLOR, BG_LIGHT, get_font, render_fitted_text)
 
 
 class HPBar:
@@ -27,14 +27,12 @@ class HPBar:
     @property
     def font_name(self):
         if self._font_name is None:
-            # Taille reduite pour la font Pokemon (etait 28)
             self._font_name = get_font(16)
         return self._font_name
 
     @property
     def font_hp(self):
         if self._font_hp is None:
-            # Taille reduite pour la font Pokemon (etait 22)
             self._font_hp = get_font(14)
         return self._font_hp
 
@@ -53,13 +51,8 @@ class HPBar:
 
     def draw(self, surface):
         """Dessine le panneau d'info complet : nom, niveau, barre, texte PV."""
-        # Mesurer le texte pour adapter la largeur du panneau
-        name_text = self.font_name.render(f"{self.pokemon.name}", True, BLACK)
-        level_text = self.font_name.render(f"Nv.{self.pokemon.level}", True, BLACK)
-
-        # Largeur minimale = max(self.width, largeur nom + niveau + marge)
-        min_width = name_text.get_width() + level_text.get_width() + 30
-        panel_inner_width = max(self.width, min_width)
+        # Largeur fixe du panneau — ne s'etire plus selon le nom
+        panel_inner_width = self.width
 
         # Fond du panneau
         panel_width = panel_inner_width + 20
@@ -68,7 +61,15 @@ class HPBar:
         pygame.draw.rect(surface, BG_LIGHT, panel_rect)
         pygame.draw.rect(surface, BORDER_COLOR, panel_rect, 2)
 
-        # Nom et niveau
+        # Niveau (taille fixe, on le mesure d'abord)
+        level_text = self.font_name.render(f"Nv.{self.pokemon.level}", True, BLACK)
+
+        # Nom adapte a l'espace restant (largeur - niveau - marge)
+        available_for_name = panel_inner_width - level_text.get_width() - 10
+        name_text = render_fitted_text(
+            self.pokemon.name, available_for_name, 16, BLACK, min_size=10
+        )
+
         surface.blit(name_text, (self.x, self.y + 2))
         level_x = self.x + panel_inner_width - level_text.get_width()
         surface.blit(level_text, (level_x, self.y + 2))
