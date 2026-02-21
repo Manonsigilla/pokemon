@@ -71,7 +71,27 @@
             "defense": 83,
             "attack": 89,
             "hp": 138
+        },
+        {
+            "id": 7,
+            "name": "carapuce",
+            "type": [
+                "water"
+            ],
+            "defense": 70,
+            "attack": 53,
+            "hp": 104
+        },
+        {
+            "id": 8,
+            "name": "carabaffe",
+            "type": [
+                "water"
+            ],
+            "defense": 85,
+            "attack": 68,
+            "hp": 119
         }
     ],
-    "count": 7
+    "count": 9
 }
