@@ -2,7 +2,7 @@
 
 import pygame
 
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE  # Corrigé : pas "pokemon.config"
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE  
 from api.client import APIClient
 from models.type_chart import TypeChart
 from states.state_manager import StateManager
@@ -11,6 +11,7 @@ from states.selection_state import SelectionState
 from states.battle.battle_state import BattleState
 from states.result_state import ResultState
 from states.starter_selection_state import StarterSelectionState
+from states.map_state import MapState 
 
 
 class Game:
@@ -35,6 +36,7 @@ class Game:
         self.state_manager.register_state("result", ResultState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
         self.state_manager.change_state("starter_selection")
+        self.state_manager.register_state("map", MapState(self.state_manager))
 
     def run(self):
         """Boucle principale du jeu."""

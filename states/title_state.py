@@ -145,7 +145,7 @@ class TitleState(State):
                 else:
                     if self.buttons[0].check_click(mouse_pos, True):
                         sound_manager.play_select()
-                        self.state_manager.change_state("starter_selection")
+                        self.state_manager.change_state("map")
                     elif self.buttons[1].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"

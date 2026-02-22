@@ -1,12 +1,13 @@
 import pygame
 import pytmx
 from pytmx.util_pygame import load_pygame
+from states.state import State
 
 TILE_SIZE = 16
 
-class MapState:
+class MapState(State):
     def __init__(self, state_manager, map_file="assets/maps/route01.tmx"):
-        self.state_manager = state_manager
+        super().__init__(state_manager)
         self.tmx_data = load_pygame(map_file)
         self.width = self.tmx_data.width
         self.height = self.tmx_data.height
@@ -34,6 +35,9 @@ class MapState:
                     dx = 1
                 if dx or dy:
                     self.try_move(dx, dy)
+                    
+    def update (self, dt):
+        pass  # Pas de logique de jeu pour l'instant
 
     def try_move(self, dx, dy):
         x, y = self.player_pos
@@ -53,16 +57,23 @@ class MapState:
             tx, ty = int(obj.x // TILE_SIZE), int(obj.y // TILE_SIZE)
             if tx == x and ty == y:
                 print(f"Rencontre objet : {obj.name}")
-
+    
     def draw(self, screen):
-        # Affiche tous les calques de tiles
+        # Liste des calques à afficher
+        layers_to_show = ["Fond"]    
         for layer in self.tmx_data.visible_layers:
-            if isinstance(layer, pytmx.TiledTileLayer):
+            if isinstance(layer, pytmx.TiledTileLayer) and layer.name in layers_to_show:
                 for x, y, gid in layer:
                     if gid != 0:
                         tile = self.tmx_data.get_tile_image_by_gid(gid)
                         if tile:
                             screen.blit(tile, (x*TILE_SIZE, y*TILE_SIZE))
-        # Dessine le joueur
+        # Affiche le joueur
         px, py = self.player_pos
         screen.blit(self.player_sprite, (px*TILE_SIZE, py*TILE_SIZE))
+        
+    def enter(self):
+        print("Entré dans MapState")
+        
+    def exit(self):
+        print("Sorti de MapState")

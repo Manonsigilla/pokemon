@@ -47,7 +47,7 @@
 </data>
  </layer>
  <imagelayer id="2" name="Fond">
-  <image source="../../../../../Downloads/Game Boy _ GBC - Pokemon Gold _ Silver - Backgrounds (Routes) - Route 01.png" width="336" height="607"/>
+  <image source="../../../../../Downloads/route01.png" width="336" height="607"/>
  </imagelayer>
  <layer id="3" name="Collision" width="21" height="38">
   <data encoding="csv">
