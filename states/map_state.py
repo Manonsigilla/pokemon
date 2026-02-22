@@ -8,18 +8,25 @@ TILE_SIZE = 16
 class MapState(State):
     def __init__(self, state_manager, map_file="assets/maps/route01.tmx"):
         super().__init__(state_manager)
-        self.tmx_data = load_pygame(map_file)
+        self.map_file = map_file
+        self.tmx_data = None
+        self.player_pos = [1, 1]  # Position du joueur en tiles
+        self.player_sprite = None
+        self.can_move = True
+        
+    def enter(self):
+        print("Entré dans MapState")
+        self.tmx_data = load_pygame(self.map_file)
         self.width = self.tmx_data.width
         self.height = self.tmx_data.height
-        # Trouve l'objet de départ ("StartPosition")
+
         start_obj = next((o for o in self.tmx_data.objects if o.name == "StartPosition"), None)
         if start_obj:
             self.player_pos = [int(start_obj.x // TILE_SIZE), int(start_obj.y // TILE_SIZE)]
         else:
-            self.player_pos = [1, 1]  # Par défaut
+            self.player_pos = [1, 1]
 
         self.player_sprite = pygame.image.load("assets/sprites/player.png")
-        self.can_move = True
 
     def handle_events(self, events):
         for event in events:
@@ -58,11 +65,14 @@ class MapState(State):
             if tx == x and ty == y:
                 print(f"Rencontre objet : {obj.name}")
     
-    def draw(self, screen):
-        # Liste des calques à afficher
-        layers_to_show = ["Fond"]    
+    def draw(self, screen):   
+        screen.fill((0, 0, 0))  # Fond noir 
         for layer in self.tmx_data.visible_layers:
-            if isinstance(layer, pytmx.TiledTileLayer) and layer.name in layers_to_show:
+            if isinstance(layer, pytmx.TiledImageLayer):
+                if layer.image:
+                    screen.blit(layer.image, (0, 0))
+                
+            elif isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, gid in layer:
                     if gid != 0:
                         tile = self.tmx_data.get_tile_image_by_gid(gid)
@@ -71,9 +81,6 @@ class MapState(State):
         # Affiche le joueur
         px, py = self.player_pos
         screen.blit(self.player_sprite, (px*TILE_SIZE, py*TILE_SIZE))
-        
-    def enter(self):
-        print("Entré dans MapState")
         
     def exit(self):
         print("Sorti de MapState")

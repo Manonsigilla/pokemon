@@ -91,7 +91,48 @@
             "defense": 85,
             "attack": 68,
             "hp": 119
+        },
+        {
+            "id": 33,
+            "name": "nidorino",
+            "type": [
+                "poison"
+            ],
+            "defense": 62,
+            "attack": 77,
+            "hp": 121
+        },
+        {
+            "id": 35,
+            "name": "mélofée",
+            "type": [
+                "fairy"
+            ],
+            "defense": 53,
+            "attack": 50,
+            "hp": 130
+        },
+        {
+            "id": 144,
+            "name": "artikodin",
+            "type": [
+                "ice",
+                "flying"
+            ],
+            "defense": 105,
+            "attack": 90,
+            "hp": 150
+        },
+        {
+            "id": 36,
+            "name": "mélodelfe",
+            "type": [
+                "fairy"
+            ],
+            "defense": 78,
+            "attack": 75,
+            "hp": 155
         }
     ],
-    "count": 9
+    "count": 13
 }

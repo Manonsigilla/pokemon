@@ -35,8 +35,8 @@ class Game:
         self.state_manager.register_state("battle", BattleState(self.state_manager, self.type_chart))
         self.state_manager.register_state("result", ResultState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
-        self.state_manager.change_state("starter_selection")
         self.state_manager.register_state("map", MapState(self.state_manager))
+        self.state_manager.change_state("starter_selection")
 
     def run(self):
         """Boucle principale du jeu."""
