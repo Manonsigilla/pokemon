@@ -19,14 +19,23 @@ class MapState(State):
         self.tmx_data = load_pygame(self.map_file)
         self.width = self.tmx_data.width
         self.height = self.tmx_data.height
+        
+        # Récupère l'index du calque Collision
+        self.collision_layer_index = None
+        for i, layer in enumerate(self.tmx_data.layers):
+            if layer.name == "Collision":
+                self.collision_layer_index = i
+                break
 
         start_obj = next((o for o in self.tmx_data.objects if o.name == "StartPosition"), None)
-        if start_obj:
-            self.player_pos = [int(start_obj.x // TILE_SIZE), int(start_obj.y // TILE_SIZE)]
-        else:
-            self.player_pos = [1, 1]
-
+        self.player_pos = [int(start_obj.x // TILE_SIZE), int(start_obj.y // TILE_SIZE)] if start_obj else [1, 1]
         self.player_sprite = pygame.image.load("assets/sprites/player.png")
+        
+        from config import SCREEN_WIDTH, SCREEN_HEIGHT
+        map_pixel_w = self.width * TILE_SIZE
+        map_pixel_h = self.height * TILE_SIZE
+        self.offset_x = (SCREEN_WIDTH - map_pixel_w) // 2
+        self.offset_y = (SCREEN_HEIGHT - map_pixel_h) // 2
 
     def handle_events(self, events):
         for event in events:
@@ -54,9 +63,13 @@ class MapState(State):
             self.check_special(nx, ny)
 
     def is_walkable(self, x, y):
-        # Nom du calque collision ! (majuscule identique à Tiled)
-        gid = self.tmx_data.get_tile_gid(x, y, layer_name="Collision")
-        return gid == 0  # Pas de mur
+        if self.collision_layer_index is None:
+            return True
+        # Vérifie les limites de la map
+        if x < 0 or y < 0 or x >= self.width or y >= self.height:
+            return False
+        gid = self.tmx_data.get_tile_gid(x, y, self.collision_layer_index)
+        return gid == 0
 
     def check_special(self, x, y):
         # Vérifie objets/dresseurs/baies... à la position du joueur
@@ -70,17 +83,17 @@ class MapState(State):
         for layer in self.tmx_data.visible_layers:
             if isinstance(layer, pytmx.TiledImageLayer):
                 if layer.image:
-                    screen.blit(layer.image, (0, 0))
+                    screen.blit(layer.image, (self.offset_x, self.offset_y))
                 
             elif isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, gid in layer:
                     if gid != 0:
                         tile = self.tmx_data.get_tile_image_by_gid(gid)
                         if tile:
-                            screen.blit(tile, (x*TILE_SIZE, y*TILE_SIZE))
+                            screen.blit(tile, (x*TILE_SIZE + self.offset_x, y*TILE_SIZE + self.offset_y))
         # Affiche le joueur
         px, py = self.player_pos
-        screen.blit(self.player_sprite, (px*TILE_SIZE, py*TILE_SIZE))
+        screen.blit(self.player_sprite, (px*TILE_SIZE + self.offset_x, py*TILE_SIZE + self.offset_y))
         
     def exit(self):
         print("Sorti de MapState")
