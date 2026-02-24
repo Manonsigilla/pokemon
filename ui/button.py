@@ -8,13 +8,15 @@ from config import BLACK, WHITE, DARK_GRAY, LIGHT_GRAY, BORDER_COLOR, get_font
 class Button:
     """Bouton cliquable avec image de fond ou texte simple."""
 
-    def __init__(self, x, y, width, height, text="", font=None, font_size=14, image_normal=None, image_hover=None, hide_text=False):
+    def __init__(self, x, y, width, height, text="", font=None, font_size=14, image_normal=None, image_hover=None, hide_text=False, color=None, hover_color=None):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.is_hovered = False
         self.font_size = font_size
         self._font = font
         self.hide_text = hide_text  # True = pas de texte (deja dans l'image)
+        self.color = color
+        self.hover_color = hover_color
 
         # Images du bouton
         self.img_normal = None
@@ -61,12 +63,19 @@ class Button:
                 text_rect = text_surface.get_rect(center=self.rect.center)
                 surface.blit(text_surface, text_rect)
         else:
-            # Fallback classique
-            bg_color = LIGHT_GRAY if self.is_hovered else WHITE
-            pygame.draw.rect(surface, bg_color, self.rect)
-            pygame.draw.rect(surface, BORDER_COLOR, self.rect, 3)
+            # Fallback classique (avec couleur custom si fournie)
+            if self.color:
+                bg_color = self.hover_color if (self.is_hovered and self.hover_color) else self.color
+                pygame.draw.rect(surface, bg_color, self.rect, border_radius=8)
+                pygame.draw.rect(surface, (255, 255, 255), self.rect, 2, border_radius=8)
+                text_color = WHITE
+            else:
+                bg_color = LIGHT_GRAY if self.is_hovered else WHITE
+                pygame.draw.rect(surface, bg_color, self.rect)
+                pygame.draw.rect(surface, BORDER_COLOR, self.rect, 3)
+                text_color = BLACK
 
             if self.text:
-                text_surface = self.font.render(self.text, True, BLACK)
+                text_surface = self.font.render(self.text, True, text_color)
                 text_rect = text_surface.get_rect(center=self.rect.center)
                 surface.blit(text_surface, text_rect)

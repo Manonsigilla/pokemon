@@ -49,7 +49,11 @@ class ResultState(State):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    self.state_manager.change_state("title")
+                    # Si on revient d'un combat en mode aventure, retourner a la carte
+                    if self.state_manager.shared_data.pop("adventure_return", False):
+                        self.state_manager.change_state("map")
+                    else:
+                        self.state_manager.change_state("title")
                 elif event.key == pygame.K_ESCAPE:
                     pygame.event.post(pygame.event.Event(pygame.QUIT))
 

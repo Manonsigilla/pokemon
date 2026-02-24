@@ -1,13 +1,16 @@
 """Ecran titre / menu principal."""
 
 import pygame
+import json
+import os
 
 from states.state import State
 from ui.button import Button
 from ui.sound_manager import sound_manager
+import save_manager
 from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BG_DARK, YELLOW, RED, BLUE, get_font,
-                    TITLE_LOGO, BG_MENU,
+                    TITLE_LOGO, BG_MENU, BASE_DIR,
                     BTN_AVENTURE, BTN_AVENTURE_HOVER,
                     BTN_PVP, BTN_PVP_HOVER,
                     BTN_IA, BTN_IA_HOVER,
@@ -28,6 +31,8 @@ class TitleState(State):
         self.difficulty_buttons = []
         self.logo_image = None
         self.bg_image = None
+        self.has_save = False
+        self.continue_button = None
 
     @property
     def title_font(self):
@@ -64,6 +69,9 @@ class TitleState(State):
         except Exception:
             self.logo_image = None
 
+        # ============ SAUVEGARDE ============
+        self.has_save = save_manager.save_exists()
+
         # ============ POSITIONS ============
         center_x = SCREEN_WIDTH // 2
         btn_width = 300
@@ -74,24 +82,38 @@ class TitleState(State):
         else:
             btn_start_y = 250
 
+        # ============ BOUTON CONTINUER (conditionnel) ============
+        current_y = btn_start_y
+        if self.has_save:
+            self.continue_button = Button(
+                center_x - btn_width // 2, current_y,
+                btn_width, btn_height,
+                text="Continuer aventure",
+                color=(50, 120, 200),
+                hover_color=(70, 150, 240)
+            )
+            current_y += 70
+        else:
+            self.continue_button = None
+
         # ============ BOUTONS PRINCIPAUX ============
         self.buttons = [
             Button(
-                center_x - btn_width // 2, btn_start_y,
+                center_x - btn_width // 2, current_y,
                 btn_width, btn_height,
                 image_normal=BTN_AVENTURE,
                 image_hover=BTN_AVENTURE_HOVER,
                 hide_text=True
             ),
             Button(
-                center_x - btn_width // 2, btn_start_y + 70,
+                center_x - btn_width // 2, current_y + 70,
                 btn_width, btn_height,
                 image_normal=BTN_PVP,
                 image_hover=BTN_PVP_HOVER,
                 hide_text=True
             ),
             Button(
-                center_x - btn_width // 2, btn_start_y + 140,
+                center_x - btn_width // 2, current_y + 140,
                 btn_width, btn_height,
                 image_normal=BTN_IA,
                 image_hover=BTN_IA_HOVER,
@@ -135,6 +157,8 @@ class TitleState(State):
             for button in self.difficulty_buttons:
                 button.check_hover(mouse_pos)
         else:
+            if self.continue_button:
+                self.continue_button.check_hover(mouse_pos)
             for button in self.buttons:
                 button.check_hover(mouse_pos)
 
@@ -143,9 +167,13 @@ class TitleState(State):
                 if self._show_difficulty:
                     self._handle_difficulty_click(mouse_pos)
                 else:
-                    if self.buttons[0].check_click(mouse_pos, True):
+                    # Bouton Continuer aventure
+                    if self.continue_button and self.continue_button.check_click(mouse_pos, True):
                         sound_manager.play_select()
-                        self.state_manager.change_state("map")
+                        self._load_and_continue()
+                    elif self.buttons[0].check_click(mouse_pos, True):
+                        sound_manager.play_select()
+                        self.state_manager.change_state("starter_selection")
                     elif self.buttons[1].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self.state_manager.shared_data["mode"] = "pvp"
@@ -238,6 +266,9 @@ class TitleState(State):
                 surface.blit(title, ((SCREEN_WIDTH - title.get_width()) // 2, 100))
                 surface.blit(title2, ((SCREEN_WIDTH - title2.get_width()) // 2, 160))
 
+            if self.continue_button:
+                self.continue_button.draw(surface)
+
             for button in self.buttons:
                 button.draw(surface)
 
@@ -246,3 +277,46 @@ class TitleState(State):
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 500))
+
+    def _load_and_continue(self):
+        """Charge la sauvegarde et reprend l'aventure."""
+        save_data = save_manager.load_game()
+        if not save_data:
+            return
+
+        starter_id = save_data["starter_id"]
+        player_pos = save_data.get("player_pos", [1, 1])
+
+        # Charger les donnees du starter depuis bdd/pokemon.json
+        pokemon_file = os.path.join(BASE_DIR, "bdd", "pokemon.json")
+        with open(pokemon_file, "r", encoding="utf-8") as f:
+            all_pokemon = json.load(f)
+
+        starter_data = None
+        for poke in all_pokemon:
+            if poke["id"] == starter_id:
+                starter_data = poke
+                break
+
+        if not starter_data:
+            return
+
+        # Creer le Pokemon starter
+        from states.starter_selection_state import StarterSelectionState
+        temp_state = self.state_manager.states.get("starter_selection")
+        if not temp_state:
+            return
+
+        starter_pokemon = temp_state._create_pokemon_from_data(starter_data, level=5)
+
+        # Creer le joueur
+        from models.player import Player
+        player = Player(name="Joueur", is_ai=False)
+        player.add_pokemon(starter_pokemon)
+
+        # Passer au state map
+        self.state_manager.shared_data["player"] = player
+        self.state_manager.shared_data["starter_selected"] = True
+        self.state_manager.shared_data["saved_player_pos"] = player_pos
+        self.state_manager.shared_data["mode"] = "adventure"
+        self.state_manager.change_state("map")

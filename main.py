@@ -5,6 +5,7 @@ import pygame
 from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE  
 from api.client import APIClient
 from models.type_chart import TypeChart
+from models.combat import Combat
 from states.state_manager import StateManager
 from states.title_state import TitleState
 from states.selection_state import SelectionState
@@ -27,6 +28,7 @@ class Game:
         # Services partages
         self.api_client = APIClient()
         self.type_chart = TypeChart()
+        self.combat = Combat(self.type_chart)
 
         # State machine
         self.state_manager = StateManager()
@@ -36,7 +38,7 @@ class Game:
         self.state_manager.register_state("result", ResultState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
         self.state_manager.register_state("map", MapState(self.state_manager))
-        self.state_manager.change_state("starter_selection")
+        self.state_manager.change_state("title")
 
     def run(self):
         """Boucle principale du jeu."""

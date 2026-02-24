@@ -328,8 +328,10 @@ class StarterSelectionState(State):
         Cette methode :
         1. Cree un objet Pokemon a partir des donnees JSON
         2. Cree un joueur (Player) avec ce Pokemon
-        3. Stocke le joueur dans shared_data pour le passer aux autres ecrans
-        4. Change d'etat (par exemple vers une map ou un combat)
+        3. Reinitialise et sauvegarde le starter dans le Pokédex
+        4. Sauvegarde la partie (savegame.json)
+        5. Stocke le joueur dans shared_data pour le passer aux autres ecrans
+        6. Change d'etat vers la carte
         """
         print(f"[StarterSelection] Starter choisi : index {self.selected_index}")
         
@@ -341,6 +343,21 @@ class StarterSelectionState(State):
         # On cree un Pokemon niveau 5 (niveau de depart classique)
         starter_pokemon = self._create_pokemon_from_data(starter_data, level=5)
         
+        # === Reinitialiser le Pokédex (nouvelle aventure = on efface l'ancien) ===
+        from models.combat import Combat
+        from models.type_chart import TypeChart
+        combat = Combat(TypeChart())
+        combat._save_pokedex({"pokemon": [], "count": 0})
+        combat.save_to_pokedex(starter_pokemon)
+        
+        # === Sauvegarder la partie ===
+        import save_manager
+        save_manager.save_game(
+            starter_id=starter_data["id"],
+            starter_name=starter_data["name"],
+            player_pos=[1, 1]
+        )
+        
         # ============ CREER LE JOUEUR ============
         # Le joueur humain avec son Pokemon de depart
         player = Player(name="Joueur", is_ai=False)
@@ -350,15 +367,12 @@ class StarterSelectionState(State):
         # On partage le joueur avec les autres ecrans via state_manager.shared_data
         self.state_manager.shared_data["player"] = player
         self.state_manager.shared_data["starter_selected"] = True
+        self.state_manager.shared_data["mode"] = "adventure"
         
         # ============ CHANGER D'ETAT ============
-        # Pour l'instant, on retourne au menu titre (tu changeras ca plus tard)
-        # Remplace "title" par "map" ou "pokedex" selon ton besoin
-        print(f"[StarterSelection] Changement d'etat vers 'title' (temporaire)")
-        self.state_manager.change_state("title")
-        
-        # TODO : Remplacer par le vrai etat (map, intro, etc.)
-        # self.state_manager.change_state("map")
+
+        print(f"[StarterSelection] Changement d'etat vers 'map'")
+        self.state_manager.change_state("map")
     
     
     def _create_pokemon_from_data(self, pokemon_data, level):

@@ -1,138 +1,45 @@
 {
     "pokemon": [
         {
-            "id": 43,
-            "name": "mystherbe",
+            "id": 4,
+            "name": "salamèche",
             "type": [
-                "grass",
-                "poison"
+                "fire"
             ],
-            "defense": 60,
-            "attack": 55,
-            "hp": 105
+            "defense": 9,
+            "attack": 10,
+            "hp": 18
         },
         {
-            "id": 9,
-            "name": "tortank",
+            "id": 63,
+            "name": "abra",
+            "type": [
+                "psychic"
+            ],
+            "defense": 7,
+            "attack": 8,
+            "hp": 22
+        },
+        {
+            "id": 129,
+            "name": "magicarpe",
             "type": [
                 "water"
-            ],
-            "defense": 105,
-            "attack": 88,
-            "hp": 139
-        },
-        {
-            "id": 52,
-            "name": "miaouss",
-            "type": [
-                "normal"
-            ],
-            "defense": 40,
-            "attack": 50,
-            "hp": 100
-        },
-        {
-            "id": 30,
-            "name": "nidorina",
-            "type": [
-                "poison"
-            ],
-            "defense": 72,
-            "attack": 67,
-            "hp": 130
-        },
-        {
-            "id": 20,
-            "name": "rattatac",
-            "type": [
-                "normal"
-            ],
-            "defense": 65,
-            "attack": 86,
-            "hp": 115
-        },
-        {
-            "id": 113,
-            "name": "leveinard",
-            "type": [
-                "normal"
             ],
             "defense": 10,
-            "attack": 10,
-            "hp": 310
+            "attack": 6,
+            "hp": 17
         },
         {
-            "id": 6,
-            "name": "dracaufeu",
-            "type": [
-                "fire",
-                "flying"
-            ],
-            "defense": 83,
-            "attack": 89,
-            "hp": 138
-        },
-        {
-            "id": 7,
-            "name": "carapuce",
-            "type": [
-                "water"
-            ],
-            "defense": 70,
-            "attack": 53,
-            "hp": 104
-        },
-        {
-            "id": 8,
-            "name": "carabaffe",
-            "type": [
-                "water"
-            ],
-            "defense": 85,
-            "attack": 68,
-            "hp": 119
-        },
-        {
-            "id": 33,
-            "name": "nidorino",
+            "id": 23,
+            "name": "abo",
             "type": [
                 "poison"
             ],
-            "defense": 62,
-            "attack": 77,
-            "hp": 121
-        },
-        {
-            "id": 35,
-            "name": "mélofée",
-            "type": [
-                "fairy"
-            ],
-            "defense": 53,
-            "attack": 50,
-            "hp": 130
-        },
-        {
-            "id": 144,
-            "name": "artikodin",
-            "type": [
-                "ice",
-                "flying"
-            ],
-            "defense": 105,
-            "attack": 90,
-            "hp": 150
-        },
-        {
-            "id": 36,
-            "name": "mélodelfe",
-            "type": [
-                "fairy"
-            ],
-            "defense": 78,
-            "attack": 75,
-            "hp": 155
+            "defense": 10,
+            "attack": 12,
+            "hp": 20
         }
     ],
-    "count": 13
+    "count": 4
 }
