@@ -355,7 +355,8 @@ class StarterSelectionState(State):
         save_manager.save_game(
             starter_id=starter_data["id"],
             starter_name=starter_data["name"],
-            player_pos=[1, 1]
+            player_pos=[1, 1],
+            defeated_entities=[]
         )
         
         # ============ CREER LE JOUEUR ============

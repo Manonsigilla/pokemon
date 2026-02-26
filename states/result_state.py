@@ -43,6 +43,23 @@ class ResultState(State):
                 )
             except Exception:
                 self.winner_sprite = None
+                
+        # Gestion de la victoire en mode aventure pour supprimer l'entite de la carte
+        winner_player = self.state_manager.shared_data.get("winner_player")
+        player1 = self.state_manager.shared_data.get("player1")
+        target_name = self.state_manager.shared_data.pop("current_encounter_name", None)
+        loser_player = self.state_manager.shared_data.get("loser_player")
+        
+        self.is_adventure = self.state_manager.shared_data.get("adventure_return", False)
+        self.captured = False
+        
+        if target_name and winner_player and player1 and winner_player == player1:
+            self.state_manager.shared_data["victorious_over"] = target_name
+            # Capturer le pokemon sauvage
+            if loser_player and loser_player.name == "Pokémon Sauvage" and len(loser_player.team) > 0:
+                caught_pokemon = loser_player.team[0]
+                player1.add_pokemon(caught_pokemon)
+                self.captured = True
 
     def handle_events(self, events):
         """Entree pour rejouer, Echap pour quitter."""
@@ -92,8 +109,15 @@ class ResultState(State):
         hp_x = (SCREEN_WIDTH - hp_text.get_width()) // 2
         surface.blit(hp_text, (hp_x, 475))
 
+        if getattr(self, "captured", False):
+            cap_str = "Pokémon ajouté au Pokédex et à l'équipe !"
+            cap_text = self.font_info.render(cap_str, True, GREEN)
+            cap_x = (SCREEN_WIDTH - cap_text.get_width()) // 2
+            surface.blit(cap_text, (cap_x, 500))
+
         # Instructions
-        hint1 = self.font_info.render("Entree = Rejouer", True, (180, 180, 180))
+        action_text = "Entree = Continuer" if getattr(self, "is_adventure", False) else "Entree = Rejouer"
+        hint1 = self.font_info.render(action_text, True, (180, 180, 180))
         hint2 = self.font_info.render("Echap = Quitter", True, (180, 180, 180))
-        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, 520))
-        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, 550))
+        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, 530))
+        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, 560))

@@ -11,34 +11,35 @@
             "hp": 18
         },
         {
-            "id": 63,
-            "name": "abra",
+            "id": 19,
+            "name": "rattata",
             "type": [
-                "psychic"
+                "normal"
+            ],
+            "defense": 7,
+            "attack": 9,
+            "hp": 16
+        },
+        {
+            "id": 161,
+            "name": "fouinette",
+            "type": [
+                "normal"
             ],
             "defense": 7,
             "attack": 8,
-            "hp": 22
+            "hp": 16
         },
         {
-            "id": 129,
-            "name": "magicarpe",
+            "id": 16,
+            "name": "roucool",
             "type": [
-                "water"
+                "normal",
+                "flying"
             ],
-            "defense": 10,
-            "attack": 6,
+            "defense": 8,
+            "attack": 8,
             "hp": 17
-        },
-        {
-            "id": 23,
-            "name": "abo",
-            "type": [
-                "poison"
-            ],
-            "defense": 10,
-            "attack": 12,
-            "hp": 20
         }
     ],
     "count": 4

@@ -13,18 +13,20 @@ def save_exists():
     return os.path.exists(SAVE_FILE)
 
 
-def save_game(starter_id, starter_name, player_pos=None):
+def save_game(starter_id, starter_name, player_pos=None, defeated_entities=None):
     """Sauvegarde la partie en cours.
 
     Args:
         starter_id (int): ID du Pokemon starter choisi
         starter_name (str): Nom du starter
         player_pos (list): Position [x, y] du joueur sur la carte
+        defeated_entities (list): Liste des noms des entités battues/ramassées
     """
     data = {
         "starter_id": starter_id,
         "starter_name": starter_name,
-        "player_pos": player_pos or [1, 1]
+        "player_pos": player_pos or [1, 1],
+        "defeated_entities": defeated_entities or []
     }
     with open(SAVE_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
