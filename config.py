@@ -155,6 +155,8 @@ BG_MENU = os.path.join(IMAGES_DIR, "bg_menu.png")
 BG_SELECTION = os.path.join(IMAGES_DIR, "bg_selection.jpg")
 
 # --- Boutons menu principal ---
+BTN_NVAVENTURE = os.path.join(IMAGES_DIR, "btn_nvaventure.png")
+BTN_NVAVENTURE_HOVER = os.path.join(IMAGES_DIR, "btn_nvaventure_hover.png")
 BTN_AVENTURE = os.path.join(IMAGES_DIR, "btn_aventure.png")
 BTN_AVENTURE_HOVER = os.path.join(IMAGES_DIR, "btn_aventure_hover.png")
 BTN_PVP = os.path.join(IMAGES_DIR, "btn_pvp.png")

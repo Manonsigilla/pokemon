@@ -1,45 +1,15 @@
 {
     "pokemon": [
         {
-            "id": 4,
-            "name": "salamèche",
-            "type": [
-                "fire"
-            ],
-            "defense": 9,
-            "attack": 10,
-            "hp": 18
-        },
-        {
-            "id": 63,
-            "name": "abra",
-            "type": [
-                "psychic"
-            ],
-            "defense": 7,
-            "attack": 8,
-            "hp": 22
-        },
-        {
-            "id": 129,
-            "name": "magicarpe",
+            "id": 7,
+            "name": "carapuce",
             "type": [
                 "water"
             ],
-            "defense": 10,
-            "attack": 6,
-            "hp": 17
-        },
-        {
-            "id": 23,
-            "name": "abo",
-            "type": [
-                "poison"
-            ],
-            "defense": 10,
-            "attack": 12,
-            "hp": 20
+            "defense": 11,
+            "attack": 9,
+            "hp": 19
         }
     ],
-    "count": 4
+    "count": 1
 }

@@ -16,7 +16,7 @@ from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BTN_IA, BTN_IA_HOVER,
                     BTN_FACILE, BTN_FACILE_HOVER,
                     BTN_NORMAL, BTN_NORMAL_HOVER,
-                    BTN_DIFFICILE, BTN_DIFFICILE_HOVER)
+                    BTN_DIFFICILE, BTN_DIFFICILE_HOVER, BTN_NVAVENTURE, BTN_NVAVENTURE_HOVER)
 
 
 class TitleState(State):
@@ -88,9 +88,9 @@ class TitleState(State):
             self.continue_button = Button(
                 center_x - btn_width // 2, current_y,
                 btn_width, btn_height,
-                text="Continuer aventure",
-                color=(50, 120, 200),
-                hover_color=(70, 150, 240)
+                image_normal=BTN_NVAVENTURE,
+                image_hover=BTN_NVAVENTURE_HOVER,
+                hide_text=True
             )
             current_y += 70
         else:
@@ -273,7 +273,7 @@ class TitleState(State):
                 button.draw(surface)
 
             hint = self.subtitle_font.render(
-                "ou appuyez sur 1 / 2", True, (180, 180, 180)
+                "", True, (180, 180, 180)
             )
             hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
             surface.blit(hint, (hint_x, 500))
