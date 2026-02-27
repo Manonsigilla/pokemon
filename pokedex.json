@@ -1,10 +1,41 @@
 {
     "pokemon": [
         {
-            "id": 7,
-            "name": "carapuce",
+            "id": 4,
+            "name": "salamèche",
             "type": [
-                "water"
+                "fire"
+            ],
+            "defense": 9,
+            "attack": 10,
+            "hp": 18
+        },
+        {
+            "id": 19,
+            "name": "rattata",
+            "type": [
+                "normal"
+            ],
+            "defense": 7,
+            "attack": 9,
+            "hp": 16
+        },
+        {
+            "id": 161,
+            "name": "fouinette",
+            "type": [
+                "normal"
+            ],
+            "defense": 7,
+            "attack": 8,
+            "hp": 16
+        },
+        {
+            "id": 16,
+            "name": "roucool",
+            "type": [
+                "normal",
+                "flying"
             ],
             "defense": 11,
             "attack": 9,

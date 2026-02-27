@@ -286,6 +286,7 @@ class TitleState(State):
 
         starter_id = save_data["starter_id"]
         player_pos = save_data.get("player_pos", [1, 1])
+        defeated_entities = save_data.get("defeated_entities", [])
 
         # Charger les donnees du starter depuis bdd/pokemon.json
         pokemon_file = os.path.join(BASE_DIR, "bdd", "pokemon.json")
@@ -319,4 +320,5 @@ class TitleState(State):
         self.state_manager.shared_data["starter_selected"] = True
         self.state_manager.shared_data["saved_player_pos"] = player_pos
         self.state_manager.shared_data["mode"] = "adventure"
+        self.state_manager.shared_data["defeated_entities"] = defeated_entities
         self.state_manager.change_state("map")

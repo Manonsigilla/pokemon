@@ -13,6 +13,8 @@ from states.battle.battle_state import BattleState
 from states.result_state import ResultState
 from states.starter_selection_state import StarterSelectionState
 from states.map_state import MapState 
+from states.pokedex_state import PokedexState
+from states.inventory_state import InventoryState
 
 
 class Game:
@@ -38,6 +40,8 @@ class Game:
         self.state_manager.register_state("result", ResultState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
         self.state_manager.register_state("map", MapState(self.state_manager))
+        self.state_manager.register_state("pokedex", PokedexState(self.state_manager))
+        self.state_manager.register_state("inventory", InventoryState(self.state_manager))
         self.state_manager.change_state("title")
 
     def run(self):

@@ -69,6 +69,7 @@ class BattleInput:
                     if self._fleeing:
                         self._fleeing = False
                         if self.state_manager.shared_data.pop("adventure_return", False):
+                            self.state_manager.shared_data.pop("current_encounter_name", None)
                             self.state_manager.change_state("map")
                         else:
                             self.state_manager.change_state("title")
