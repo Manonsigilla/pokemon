@@ -7,7 +7,7 @@ class Pokemon:
     """Represente un Pokemon avec toutes ses caracteristiques de combat."""
 
     def __init__(self, pokemon_id, name, level, types, base_stats, moves,
-                 front_sprite_path, back_sprite_path):
+                front_sprite_path, back_sprite_path):
         self.pokemon_id = pokemon_id
         self.name = name.title()
         self.level = level
@@ -94,6 +94,34 @@ class Pokemon:
         if category == "physical":
             return self.defense
         return self.sp_defense
+
+    def evolve(self, new_id, new_name, new_types, new_base_stats,
+               new_front_sprite, new_back_sprite, new_moves=None):
+        """Fait evoluer le Pokemon : change ses donnees tout en gardant le niveau et le ratio PV."""
+        old_name = self.name
+        hp_ratio = self.current_hp / self.max_hp if self.max_hp > 0 else 1.0
+
+        self.pokemon_id = new_id
+        self.name = new_name.title()
+        self.types = new_types
+        self.base_stats = new_base_stats
+
+        # Recalculer les stats
+        self.max_hp = self._calc_hp(new_base_stats["hp"], self.level)
+        self.current_hp = max(1, int(self.max_hp * hp_ratio))
+        self.attack = self._calc_stat(new_base_stats["attack"], self.level)
+        self.defense = self._calc_stat(new_base_stats["defense"], self.level)
+        self.sp_attack = self._calc_stat(new_base_stats["special-attack"], self.level)
+        self.sp_defense = self._calc_stat(new_base_stats["special-defense"], self.level)
+        self.speed = self._calc_stat(new_base_stats["speed"], self.level)
+
+        self.front_sprite_path = new_front_sprite
+        self.back_sprite_path = new_back_sprite
+
+        if new_moves:
+            self.moves = new_moves
+
+        return f"{old_name} evolue en {self.name} !"
 
     def hp_percentage(self):
         """Retourne le pourcentage de HP restants (0.0 a 1.0)."""

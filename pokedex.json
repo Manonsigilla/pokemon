@@ -40,7 +40,238 @@
             "defense": 11,
             "attack": 9,
             "hp": 19
+        },
+        {
+            "id": 12,
+            "name": "papilusion",
+            "type": [
+                "bug",
+                "flying"
+            ],
+            "defense": 55,
+            "attack": 50,
+            "hp": 120
+        },
+        {
+            "id": 7,
+            "name": "carapuce",
+            "type": [
+                "water"
+            ],
+            "defense": 70,
+            "attack": 53,
+            "hp": 104
+        },
+        {
+            "id": 2,
+            "name": "herbizarre",
+            "type": [
+                "grass",
+                "poison"
+            ],
+            "defense": 68,
+            "attack": 67,
+            "hp": 120
+        },
+        {
+            "id": 1,
+            "name": "bulbizarre",
+            "type": [
+                "grass",
+                "poison"
+            ],
+            "defense": 54,
+            "attack": 54,
+            "hp": 105
+        },
+        {
+            "id": 6,
+            "name": "dracaufeu",
+            "type": [
+                "fire",
+                "flying"
+            ],
+            "defense": 83,
+            "attack": 89,
+            "hp": 138
+        },
+        {
+            "id": 11,
+            "name": "chrysacier",
+            "type": [
+                "bug"
+            ],
+            "defense": 60,
+            "attack": 25,
+            "hp": 110
+        },
+        {
+            "id": 3,
+            "name": "florizarre",
+            "type": [
+                "grass",
+                "poison"
+            ],
+            "defense": 88,
+            "attack": 87,
+            "hp": 140
+        },
+        {
+            "id": 8,
+            "name": "carabaffe",
+            "type": [
+                "water"
+            ],
+            "defense": 85,
+            "attack": 68,
+            "hp": 119
+        },
+        {
+            "id": 13,
+            "name": "aspicot",
+            "type": [
+                "bug",
+                "poison"
+            ],
+            "defense": 35,
+            "attack": 40,
+            "hp": 100
+        },
+        {
+            "id": 14,
+            "name": "coconfort",
+            "type": [
+                "bug",
+                "poison"
+            ],
+            "defense": 55,
+            "attack": 30,
+            "hp": 105
+        },
+        {
+            "id": 9,
+            "name": "tortank",
+            "type": [
+                "water"
+            ],
+            "defense": 105,
+            "attack": 88,
+            "hp": 139
+        },
+        {
+            "id": 63,
+            "name": "abra",
+            "type": [
+                "psychic"
+            ],
+            "defense": 20,
+            "attack": 25,
+            "hp": 85
+        },
+        {
+            "id": 49,
+            "name": "aéromite",
+            "type": [
+                "bug",
+                "poison"
+            ],
+            "defense": 65,
+            "attack": 70,
+            "hp": 130
+        },
+        {
+            "id": 57,
+            "name": "colossinge",
+            "type": [
+                "fighting"
+            ],
+            "defense": 65,
+            "attack": 110,
+            "hp": 125
+        },
+        {
+            "id": 52,
+            "name": "miaouss",
+            "type": [
+                "normal"
+            ],
+            "defense": 40,
+            "attack": 50,
+            "hp": 100
+        },
+        {
+            "id": 5,
+            "name": "reptincel",
+            "type": [
+                "fire"
+            ],
+            "defense": 63,
+            "attack": 69,
+            "hp": 118
+        },
+        {
+            "id": 26,
+            "name": "raichu",
+            "type": [
+                "electric"
+            ],
+            "defense": 60,
+            "attack": 95,
+            "hp": 120
+        },
+        {
+            "id": 33,
+            "name": "nidorino",
+            "type": [
+                "poison"
+            ],
+            "defense": 62,
+            "attack": 77,
+            "hp": 121
+        },
+        {
+            "id": 95,
+            "name": "onix",
+            "type": [
+                "rock",
+                "ground"
+            ],
+            "defense": 165,
+            "attack": 50,
+            "hp": 95
+        },
+        {
+            "id": 35,
+            "name": "mélofée",
+            "type": [
+                "fairy"
+            ],
+            "defense": 53,
+            "attack": 50,
+            "hp": 130
+        },
+        {
+            "id": 87,
+            "name": "lamantine",
+            "type": [
+                "water",
+                "ice"
+            ],
+            "defense": 85,
+            "attack": 75,
+            "hp": 150
+        },
+        {
+            "id": 15,
+            "name": "dardargnan",
+            "type": [
+                "bug",
+                "poison"
+            ],
+            "defense": 45,
+            "attack": 95,
+            "hp": 125
         }
     ],
-    "count": 1
+    "count": 26
 }

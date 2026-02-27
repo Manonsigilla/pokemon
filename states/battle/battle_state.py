@@ -226,6 +226,44 @@ class BattleState(BattleRenderer, BattleInput, BattleLogic, BattleAnimation, Sta
                 self.state_manager.shared_data["loser"] = (
                     self.battle.loser.get_active_pokemon() or self.battle.loser.team[0]
                 )
+    def _handle_result(self, event):
+        """Gere l'ecran de resultat."""
+        if event.key == pygame.K_RETURN:
+            if self.battle.is_over:
+                self.battle.end_battle()
+
+            # Passer les donnees au resultat
+            self.state_manager.shared_data["winner_player"] = self.battle.winner
+            self.state_manager.shared_data["loser_player"] = self.battle.loser
+            if self.battle.winner:
+                self.state_manager.shared_data["winner"] = (
+                    self.battle.winner.get_active_pokemon() or self.battle.winner.team[0]
+                )
+                self.state_manager.shared_data["loser"] = (
+                    self.battle.loser.get_active_pokemon() or self.battle.loser.team[0]
+                )
+
+            # ============ EVOLUTION : verifier avant d'aller au resultat ============
+            if self.battle.winner:
+                try:
+                    from api.client import APIClient
+                    api = APIClient()
+                    evolutions_to_play = []
+
+                    for pokemon in self.battle.winner.team:
+                        if not pokemon.is_fainted():
+                            evo_id = api.evolution_manager.get_evolution_id(pokemon)
+                            if evo_id is not None:
+                                # Charger les donnees du pokemon evolue
+                                evo_data = api.fetch_pokemon_data(evo_id)
+                                evolutions_to_play.append((pokemon, evo_data, api))
+
+                    if evolutions_to_play:
+                        self.state_manager.shared_data["evolutions_to_play"] = evolutions_to_play
+                        self.state_manager.change_state("evolution")
+                        return
+                except Exception as e:
+                    print(f"[BattleState] Erreur check evolution: {e}")
             self.state_manager.change_state("result")
 
     # =========================================================================

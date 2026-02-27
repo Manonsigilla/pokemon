@@ -36,23 +36,16 @@ class ResultState(State):
         """Recupere le gagnant depuis les donnees partagees."""
         sound_manager.play_victory()
         self.winner = self.state_manager.shared_data.get("winner")
-        if self.winner:
-            try:
-                self.winner_sprite = self.sprite_loader.load_sprite(
-                    self.winner.front_sprite_path, scale=4
-                )
-            except Exception:
-                self.winner_sprite = None
-                
+
         # Gestion de la victoire en mode aventure pour supprimer l'entite de la carte
         winner_player = self.state_manager.shared_data.get("winner_player")
         player1 = self.state_manager.shared_data.get("player1")
         target_name = self.state_manager.shared_data.pop("current_encounter_name", None)
         loser_player = self.state_manager.shared_data.get("loser_player")
-        
+
         self.is_adventure = self.state_manager.shared_data.get("adventure_return", False)
         self.captured = False
-        
+
         if target_name and winner_player and player1 and winner_player == player1:
             self.state_manager.shared_data["victorious_over"] = target_name
             # Capturer le pokemon sauvage
@@ -60,6 +53,38 @@ class ResultState(State):
                 caught_pokemon = loser_player.team[0]
                 player1.add_pokemon(caught_pokemon)
                 self.captured = True
+
+        # ============ EVOLUTION ============
+        # Verifier si des Pokemon du gagnant peuvent evoluer
+    def enter(self):
+        """Recupere le gagnant depuis les donnees partagees."""
+        sound_manager.play_victory()
+        self.winner = self.state_manager.shared_data.get("winner")
+
+        # Gestion de la victoire en mode aventure
+        winner_player = self.state_manager.shared_data.get("winner_player")
+        player1 = self.state_manager.shared_data.get("player1")
+        target_name = self.state_manager.shared_data.pop("current_encounter_name", None)
+        loser_player = self.state_manager.shared_data.get("loser_player")
+
+        self.is_adventure = self.state_manager.shared_data.get("adventure_return", False)
+        self.captured = False
+
+        if target_name and winner_player and player1 and winner_player == player1:
+            self.state_manager.shared_data["victorious_over"] = target_name
+            if loser_player and loser_player.name == "Pokémon Sauvage" and len(loser_player.team) > 0:
+                caught_pokemon = loser_player.team[0]
+                player1.add_pokemon(caught_pokemon)
+                self.captured = True
+
+        # Charger le sprite du gagnant
+        if self.winner:
+            try:
+                self.winner_sprite = self.sprite_loader.load_sprite(
+                    self.winner.front_sprite_path, scale=4
+                )
+            except Exception:
+                self.winner_sprite = None
 
     def handle_events(self, events):
         """Entree pour rejouer, Echap pour quitter."""
@@ -89,7 +114,7 @@ class ResultState(State):
         title_x = (SCREEN_WIDTH - title.get_width()) // 2
         surface.blit(title, (title_x, 50))
 
-        # Sprite du gagnant
+        # Sprite du gagnant (apres evolution si applicable)
         if self.winner_sprite:
             sprite_x = (SCREEN_WIDTH - self.winner_sprite.get_width()) // 2
             sprite_y = 120
@@ -107,17 +132,22 @@ class ResultState(State):
         hp_str = f"PV restants : {self.winner.current_hp}/{self.winner.max_hp}"
         hp_text = render_fitted_text(hp_str, SCREEN_WIDTH - 40, 14, WHITE, min_size=10)
         hp_x = (SCREEN_WIDTH - hp_text.get_width()) // 2
-        surface.blit(hp_text, (hp_x, 475))
+        surface.blit(hp_text, (hp_x, 465))
 
+        # Pokemon capture
+        next_y = 495
         if getattr(self, "captured", False):
-            cap_str = "Pokémon ajouté au Pokédex et à l'équipe !"
+            cap_str = "Pokemon ajoute au Pokedex et a l'equipe !"
             cap_text = self.font_info.render(cap_str, True, GREEN)
             cap_x = (SCREEN_WIDTH - cap_text.get_width()) // 2
-            surface.blit(cap_text, (cap_x, 500))
+            surface.blit(cap_text, (cap_x, next_y))
+            next_y += 25
+
 
         # Instructions
+        hint_y = max(next_y + 10, 540)
         action_text = "Entree = Continuer" if getattr(self, "is_adventure", False) else "Entree = Rejouer"
         hint1 = self.font_info.render(action_text, True, (180, 180, 180))
         hint2 = self.font_info.render("Echap = Quitter", True, (180, 180, 180))
-        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, 530))
-        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, 560))
+        surface.blit(hint1, ((SCREEN_WIDTH - hint1.get_width()) // 2, hint_y))
+        surface.blit(hint2, ((SCREEN_WIDTH - hint2.get_width()) // 2, hint_y + 25))
