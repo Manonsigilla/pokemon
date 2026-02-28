@@ -77,16 +77,16 @@ class TitleState(State):
 
         # ============ POSITIONS ============
         center_x = SCREEN_WIDTH // 2
-        btn_width = 300
+        btn_width = 290
         btn_height = 50  # Reduit pour tout faire tenir
 
         if self.logo_image:
-            btn_start_y = 80 + self.logo_image.get_height() + 20
+            btn_start_y = 90 + self.logo_image.get_height() + 10
         else:
-            btn_start_y = 220
+            btn_start_y = 200
 
         current_y = btn_start_y
-        spacing = 58  # Espacement entre boutons
+        spacing = 65  # Espacement entre boutons
 
         # ============ BOUTON CONTINUER (conditionnel) ============
         if self.has_save:
@@ -279,12 +279,12 @@ class TitleState(State):
             # Logo
             if self.logo_image:
                 logo_x = (SCREEN_WIDTH - self.logo_image.get_width()) // 2
-                surface.blit(self.logo_image, (logo_x, 80))
+                surface.blit(self.logo_image, (logo_x, 60))
             else:
                 title = self.title_font.render("POKEMON", True, YELLOW)
                 title2 = self.title_font.render("BATTLE ARENA", True, RED)
-                surface.blit(title, ((SCREEN_WIDTH - title.get_width()) // 2, 100))
-                surface.blit(title2, ((SCREEN_WIDTH - title2.get_width()) // 2, 160))
+                surface.blit(title, ((SCREEN_WIDTH - title.get_width()) // 2, 80))
+                surface.blit(title2, ((SCREEN_WIDTH - title2.get_width()) // 2, 140))
 
             if self.continue_button:
                 self.continue_button.draw(surface)

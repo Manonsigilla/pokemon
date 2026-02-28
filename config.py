@@ -178,3 +178,7 @@ BTN_POKEDEX_HOVER = os.path.join(IMAGES_DIR, "btn_pokedex_hover.png")
 
 BTN_AJOUT = os.path.join(IMAGES_DIR, "btn_ajout.png")
 BTN_AJOUT_HOVER = os.path.join(IMAGES_DIR, "btn_ajout_hover.png")
+
+# --- Pokedex ---
+BG_POKEDEX = os.path.join(IMAGES_DIR, "bg_pokedex.jpg")
+POKEDEX_TITLE_IMG = os.path.join(IMAGES_DIR, "pokedex_title.png")
