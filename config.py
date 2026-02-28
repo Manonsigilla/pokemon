@@ -171,3 +171,10 @@ BTN_NORMAL = os.path.join(IMAGES_DIR, "btn_normal.png")
 BTN_NORMAL_HOVER = os.path.join(IMAGES_DIR, "btn_normal_hover.png")
 BTN_DIFFICILE = os.path.join(IMAGES_DIR, "btn_difficile.png")
 BTN_DIFFICILE_HOVER = os.path.join(IMAGES_DIR, "btn_difficile_hover.png")
+
+# --- Boutons Pokedex et Ajouter Pokemon ---
+BTN_POKEDEX = os.path.join(IMAGES_DIR, "btn_pokedex.png")
+BTN_POKEDEX_HOVER = os.path.join(IMAGES_DIR, "btn_pokedex_hover.png")
+
+BTN_AJOUT = os.path.join(IMAGES_DIR, "btn_ajout.png")
+BTN_AJOUT_HOVER = os.path.join(IMAGES_DIR, "btn_ajout_hover.png")

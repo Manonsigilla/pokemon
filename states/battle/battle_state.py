@@ -95,7 +95,7 @@ class BattleState(BattleRenderer, BattleInput, BattleLogic, BattleAnimation, Sta
 
     def enter(self):
         """Initialise le combat avec les equipes selectionnees."""
-        sound_manager.stop_music()
+        sound_manager.play_battle_music()
         player1 = self.state_manager.shared_data["player1"]
         player2 = self.state_manager.shared_data["player2"]
         mode = self.state_manager.shared_data.get("mode", "pvp")

@@ -1,8 +1,9 @@
 {
-    "starter_id": 7,
-    "starter_name": "carapuce",
+    "starter_id": 4,
+    "starter_name": "salamèche",
     "player_pos": [
         1,
         1
-    ]
+    ],
+    "defeated_entities": []
 }

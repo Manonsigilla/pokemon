@@ -13,6 +13,7 @@ from states.battle.battle_state import BattleState
 from states.result_state import ResultState
 from states.starter_selection_state import StarterSelectionState
 from states.map_state import MapState 
+from states.add_pokemon_state import AddPokemonState
 from states.pokedex_state import PokedexState
 from states.inventory_state import InventoryState
 from states.evolution_state import EvolutionState  
@@ -44,6 +45,8 @@ class Game:
         self.state_manager.register_state("pokedex", PokedexState(self.state_manager))
         self.state_manager.register_state("inventory", InventoryState(self.state_manager))
         self.state_manager.change_state("title")
+        self.state_manager.register_state("add_pokemon", AddPokemonState(self.state_manager))
+        self.state_manager.register_state("pokedex", PokedexState(self.state_manager))
 
     def run(self):
         """Boucle principale du jeu."""

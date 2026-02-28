@@ -134,6 +134,7 @@ class MapState(State):
                             self.menu_active = False
                         elif selected == "Voir Pokedex":
                             self.state_manager.shared_data["saved_player_pos"] = list(self.player_pos)
+                            self.state_manager.shared_data["pokedex_return_to"] = "map"
                             self.state_manager.change_state("pokedex")
                         elif selected == "Voir Sac":
                             self.state_manager.shared_data["saved_player_pos"] = list(self.player_pos)
