@@ -11,36 +11,16 @@
             "hp": 18
         },
         {
-            "id": 19,
-            "name": "rattata",
-            "type": [
-                "normal"
-            ],
-            "defense": 7,
-            "attack": 9,
-            "hp": 16
-        },
-        {
-            "id": 161,
-            "name": "fouinette",
-            "type": [
-                "normal"
-            ],
-            "defense": 7,
-            "attack": 8,
-            "hp": 16
-        },
-        {
             "id": 16,
             "name": "roucool",
             "type": [
                 "normal",
                 "flying"
             ],
-            "defense": 8,
-            "attack": 8,
-            "hp": 17
+            "defense": 9,
+            "attack": 9,
+            "hp": 19
         }
     ],
-    "count": 4
+    "count": 2
 }

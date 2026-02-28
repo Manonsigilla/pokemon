@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="21" height="38" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="10">
- <tileset firstgid="1" source="../../../../../Downloads/pokemon_game/pokemon_game/Collision.tsx"/>
- <tileset firstgid="2" name="Herbes" tilewidth="16" tileheight="16" tilecount="1" columns="1">
-  <image source="../../../../../Downloads/herbe.png" width="16" height="16"/>
- </tileset>
- <imagelayer id="2" name="Fond">
-  <image source="../../../../../Downloads/route01.png" width="336" height="607"/>
- </imagelayer>
- <layer id="3" name="Collision" width="21" height="38">
-  <data encoding="csv">
+  <tileset firstgid="1" source="../Tilesets/Collision.tsx"/>
+  <tileset firstgid="2" name="Herbes" tilewidth="16" tileheight="16" tilecount="1" columns="1">
+    <image source="../Tilesets/herbe.png" width="16" height="16"/>
+  </tileset>
+  <imagelayer id="2" name="Fond">
+    <image source="../Tilesets/route01.png" width="336" height="607"/>
+  </imagelayer>
+  <layer id="3" name="Collision" width="21" height="38">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,
 0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,
@@ -48,9 +48,9 @@
 0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,
 0,1,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0
 </data>
- </layer>
- <layer id="4" name="Herbes" width="21" height="38">
-  <data encoding="csv">
+  </layer>
+  <layer id="4" name="Herbes" width="21" height="38">
+    <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -90,40 +90,40 @@
 0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,0,0,0,0
 </data>
- </layer>
- <objectgroup id="5" name="Dresseur">
-  <object id="1" name="David" type="Dresseur" x="141.5" y="293">
-   <point/>
-  </object>
-  <object id="2" name="Mimi" type="Dresseur" x="94.5" y="463.5">
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="6" name="Objets">
-  <object id="3" name="Baies_ameres" type="Objet" x="137" y="422.5">
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="7" name="StartPosition">
-  <object id="4" name="StartPosition" type="player" x="151" y="33">
-   <point/>
-  </object>
- </objectgroup>
- <objectgroup id="8" name="Pokemons">
-  <object id="5" name="Roucool" type="pokemon_sauvage" x="247" y="132.5">
-   <point/>
-  </object>
-  <object id="6" name="Ratata" type="pokemon_sauvage" x="216.5" y="154">
-   <point/>
-  </object>
-  <object id="7" name="Fouinette" type="pokemon_sauvage" x="230.5" y="250">
-   <point/>
-  </object>
-  <object id="8" name="Fouinar" type="pokemon_sauvage" x="202" y="405">
-   <point/>
-  </object>
-  <object id="9" name="Hoothoot" type="pokemon_sauvage" x="222" y="497">
-   <point/>
-  </object>
- </objectgroup>
+  </layer>
+  <objectgroup id="5" name="Dresseur">
+    <object id="1" name="David" type="Dresseur" x="141.5" y="293">
+    <point/>
+    </object>
+    <object id="2" name="Mimi" type="Dresseur" x="94.5" y="463.5">
+    <point/>
+    </object>
+  </objectgroup>
+  <objectgroup id="6" name="Objets">
+    <object id="3" name="Baies_ameres" type="Objet" x="137" y="422.5">
+    <point/>
+    </object>
+  </objectgroup>
+  <objectgroup id="7" name="StartPosition">
+    <object id="4" name="StartPosition" type="player" x="151" y="33">
+    <point/>
+    </object>
+  </objectgroup>
+  <objectgroup id="8" name="Pokemons">
+    <object id="5" name="Roucool" type="pokemon_sauvage" x="247" y="132.5">
+    <point/>
+    </object>
+    <object id="6" name="Ratata" type="pokemon_sauvage" x="216.5" y="154">
+    <point/>
+    </object>
+    <object id="7" name="Fouinette" type="pokemon_sauvage" x="230.5" y="250">
+      <point/>
+    </object>
+    <object id="8" name="Fouinar" type="pokemon_sauvage" x="202" y="405">
+      <point/>
+    </object>
+    <object id="9" name="Hoothoot" type="pokemon_sauvage" x="222" y="497">
+      <point/>
+    </object>
+  </objectgroup>
 </map>
