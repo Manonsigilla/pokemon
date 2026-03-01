@@ -2,6 +2,9 @@ import pygame
 import pytmx
 import json
 import os
+import unicodedata
+import re
+from models.item import ITEMS_DATABASE
 from pytmx.util_pygame import load_pygame
 from states.state import State
 import save_manager
@@ -35,6 +38,17 @@ class MapState(State):
         self.menu_active = False
         self.menu_options = ["Reprendre", "Voir Pokedex", "Voir Sac", "Sauvegarder & Quitter"]
         self.menu_index = 0
+        
+        # position / style de l'icône menu
+        self.menu_icon_margin = 12
+        self.menu_icon_bar_w = 22
+        self.menu_icon_bar_h = 3
+        self.menu_icon_bar_gap = 6
+        self.menu_icon_color = (230, 230, 50)  # couleur des 3 barres
+        # Indicateur hint (apparait quelques secondes au démarrage)
+        self.show_menu_hint = True
+        self.menu_hint_timer = 6.0  # secondes
+        self.menu_hint_text = "Appuyez sur M pour ouvrir le menu"
         
     def enter(self):
         print("Entré dans MapState")
@@ -162,10 +176,28 @@ class MapState(State):
                         dx = 1
                     if dx or dy:
                         self.try_move(dx, dy)
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                # Clic gauche
+                if not self.menu_active:
+                    # Vérifier le clic sur l'icône menu (3 barres)
+                    icon_x = SCREEN_WIDTH - self.menu_icon_margin - self.menu_icon_bar_w
+                    icon_y = self.menu_icon_margin
+                    outline_rect = pygame.Rect(icon_x - 4, icon_y - 4, self.menu_icon_bar_w + 8, 3*self.menu_icon_bar_h + 2*self.menu_icon_bar_gap + 8)
+                    if outline_rect.collidepoint(event.pos):
+                        self.menu_active = True
+                        self.menu_index = 0
+                        continue
                     
     def update(self, dt):
         if self.msg_timer > 0:
             self.msg_timer -= dt
+            
+        # si on affiche le hint, diminuer le timer
+        if self.menu_hint_timer > 0:
+            self.menu_hint_timer -= dt
+            if self.menu_hint_timer <= 0:
+                self.show_menu_hint = False
 
     def try_move(self, dx, dy):
         x, y = self.player_pos
@@ -200,11 +232,29 @@ class MapState(State):
         # 1. Objet (on marche dessus et on le ramasse)
         for item in list(self.map_items):
             if item["x"] == nx and item["y"] == ny:
-                self.show_message(f"Vous avez trouvé : {item['name']} !")
-                self.defeated_entities.add(item['name'])
+                item_name = item["name"]
+                self.show_message(f"Vous avez trouvé : {item_name} !")
+
+                # retirer de la map et marquer comme ramassé
+                self.defeated_entities.add(item_name)
                 self.map_items.remove(item)
-                # On ne bloque pas le mouvement
-                return False 
+
+                # tenter d'ajouter au sac du joueur
+                player = self.state_manager.shared_data.get("player")
+                # normaliser la clé et rechercher dans DB
+                key = self._normalize_item_key(item_name)
+                item_obj = ITEMS_DATABASE.get(key)
+                if player and hasattr(player, "bag") and item_obj:
+                    player.bag.add_item(item_obj, quantity=1)
+                    print(f"[MapState] Ajouté au sac : {item_obj.name}")
+                else:
+                    # Fallback / debug : si pas de player ou item introuvable
+                    if not player:
+                        print(f"[MapState] Aucun player trouvé pour ajouter l'objet {item_name}.")
+                    if not item_obj:
+                        print(f"[MapState] Item clé '{key}' introuvable dans ITEMS_DATABASE.")
+
+                return False
 
         # 2. Pokémon Sauvage (Combat)
         for pkmn in self.map_pokemons:
@@ -288,7 +338,8 @@ class MapState(State):
             save_manager.save_game(
                 starter_id=save_data["starter_id"],
                 starter_name=save_data["starter_name"],
-                player_pos=self.player_pos
+                player_pos=self.player_pos,
+                defeated_entities=list(self.defeated_entities)
             )
 
     def draw(self, screen):   
@@ -340,6 +391,26 @@ class MapState(State):
             pygame.draw.rect(screen, (30, 30, 30), bg_rect, border_radius=5)
             pygame.draw.rect(screen, (200, 200, 200), bg_rect, 2, border_radius=5)
             screen.blit(text_surf, rect)
+            
+        # --- Dessiner icône menu (3 barres) en haut à droite ---
+        icon_x = SCREEN_WIDTH - self.menu_icon_margin - self.menu_icon_bar_w
+        icon_y = self.menu_icon_margin
+        for i in range(3):
+            y = icon_y + i * (self.menu_icon_bar_h + self.menu_icon_bar_gap)
+            rect = pygame.Rect(icon_x, y, self.menu_icon_bar_w, self.menu_icon_bar_h)
+            pygame.draw.rect(screen, self.menu_icon_color, rect, border_radius=2)
+        # petit contour pour lisibilité
+        outline_rect = pygame.Rect(icon_x - 4, icon_y - 4, self.menu_icon_bar_w + 8, 3*self.menu_icon_bar_h + 2*self.menu_icon_bar_gap + 8)
+        pygame.draw.rect(screen, (0,0,0,120), outline_rect, 1, border_radius=4)
+
+        # --- Dessiner hint texte en haut gauche si demandé ---
+        if self.show_menu_hint:
+            hint_font = get_font(14)
+            hint_surf = hint_font.render(self.menu_hint_text, True, (240,240,240))
+            hint_bg = pygame.Rect(8, 8, hint_surf.get_width() + 12, hint_surf.get_height() + 8)
+            pygame.draw.rect(screen, (10,10,10), hint_bg, border_radius=6)
+            pygame.draw.rect(screen, (180,180,180), hint_bg, 1, border_radius=6)
+            screen.blit(hint_surf, (hint_bg.x + 6, hint_bg.y + 4))
 
         # Menu Pause Overlay
         if self.menu_active:
@@ -370,6 +441,15 @@ class MapState(State):
                 if i == self.menu_index:
                     # Petit curseur
                     pygame.draw.circle(screen, (255, 255, 0), (menu_x + 30, start_y + i * 40 + opt_surf.get_height()//2), 5)
+                    
+    def _normalize_item_key(self, name: str) -> str:
+        """Normalise le nom venant de la map en clé lowercase underscore (baies_ameres)."""
+        s = name.strip().lower()
+        s = unicodedata.normalize("NFKD", s)
+        s = "".join(ch for ch in s if not unicodedata.combining(ch))
+        s = re.sub(r"[\s\-]+", "_", s)
+        s = re.sub(r"[^a-z0-9_]", "", s)
+        return s
 
     def exit(self):
         print("Sorti de MapState")

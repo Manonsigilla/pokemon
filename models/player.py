@@ -1,3 +1,5 @@
+from models.item import Bag
+
 """Classe representant un dresseur Pokemon."""
 
 class Player:
@@ -13,6 +15,9 @@ class Player:
         # Pokedex simplifie (listes d'IDs) - la vraie classe viendra plus tard
         self.pokedex_seen = []
         self.pokedex_caught = []
+        
+        # Ajout du sac pour l'inventaire
+        self.bag = Bag()
 
     def add_pokemon(self, pokemon):
         """Ajoute un Pokemon a l'equipe (max 6). Retourne True si ok."""
