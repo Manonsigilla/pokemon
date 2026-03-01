@@ -54,6 +54,13 @@ class TitleState(State):
         self._show_difficulty = False
         self._show_pokedex_menu = False
 
+        # ============ NETTOYER shared_data des parties précédentes ============
+        # On garde uniquement les clés persistantes (si nécessaire)
+        keys_to_keep = {"pokedex_return_to"}  # Ajoute ici d'autres clés à garder si besoin
+        keys_to_remove = [k for k in self.state_manager.shared_data if k not in keys_to_keep]
+        for k in keys_to_remove:
+            del self.state_manager.shared_data[k]
+
         # ============ FOND ============
         try:
             bg = pygame.image.load(BG_MENU).convert()

@@ -33,11 +33,14 @@ def save_game(starter_id, starter_name, player_pos=None, defeated_entities=None)
 
 
 def load_game():
-    """Charge la sauvegarde. Retourne le dict ou None si inexistante."""
     if not save_exists():
         return None
-    with open(SAVE_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(SAVE_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, ValueError):
+        print("ATTENTION: savegame.json corrompu, sauvegarde ignoree")
+        return None
 
 
 def delete_save():

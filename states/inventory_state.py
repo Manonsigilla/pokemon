@@ -41,17 +41,29 @@ class InventoryState(State):
 
     def enter(self):
         print("Entré dans InventoryState")
-        save_data = save_manager.load_game()
         self.inventory = []
-        if save_data:
-            defeated = save_data.get("defeated_entities", [])
-            
-            for entity_name in defeated:
-                key = self._normalize_item_key(entity_name)
-                # Check if it was an item
-                if key in ITEMS_DATABASE:
-                    item_obj = ITEMS_DATABASE[key]
-                    self.inventory.append(item_obj)
+        
+        # Lire directement le Bag du joueur en mémoire
+        player = self.state_manager.shared_data.get("player")
+        if player and hasattr(player, "bag"):
+            for item_name, item_data in player.bag.items.items():
+                # Ajouter chaque objet avec sa quantité
+                self.inventory.append({
+                    "item": item_data["item"],
+                    "quantity": item_data["quantity"]
+                })
+        else:
+            # Fallback : reconstituer depuis la sauvegarde (ancien comportement)
+            save_data = save_manager.load_game()
+            if save_data:
+                defeated = save_data.get("defeated_entities", [])
+                for entity_name in defeated:
+                    key = self._normalize_item_key(entity_name)
+                    if key in ITEMS_DATABASE:
+                        self.inventory.append({
+                            "item": ITEMS_DATABASE[key],
+                            "quantity": 1
+                        })
 
     def handle_events(self, events):
         for event in events:
@@ -83,19 +95,20 @@ class InventoryState(State):
         else:
             panel_width = SCREEN_WIDTH - 100
             panel_x = 50
-            for i, item in enumerate(self.inventory):
+            for i, entry in enumerate(self.inventory):
+                item = entry["item"]
+                qty = entry["quantity"]
                 y = start_y + i * 80
                 
-                # Draw Item Box
                 box_rect = pygame.Rect(panel_x, y, panel_width, 60)
                 pygame.draw.rect(screen, (50, 50, 55), box_rect, border_radius=8)
                 pygame.draw.rect(screen, (100, 100, 100), box_rect, 2, border_radius=8)
                 
-                # Item Name
-                name_surf = render_fitted_text(item.name, panel_width - 20, 20, YELLOW, min_size=12)
+                # Nom + quantité
+                name_str = f"{item.name} x{qty}" if qty > 1 else item.name
+                name_surf = render_fitted_text(name_str, panel_width - 20, 20, YELLOW, min_size=12)
                 screen.blit(name_surf, (panel_x + 15, y + 10))
                 
-                # Item Description
                 desc_surf = render_fitted_text(item.description, panel_width - 20, 16, WHITE, min_size=10)
                 screen.blit(desc_surf, (panel_x + 15, y + 35))
 

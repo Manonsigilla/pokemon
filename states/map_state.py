@@ -337,13 +337,26 @@ class MapState(State):
     def _save_position(self):
         """Sauvegarde la position du joueur dans savegame.json."""
         save_data = save_manager.load_game()
+        
         if save_data:
-            save_manager.save_game(
-                starter_id=save_data["starter_id"],
-                starter_name=save_data["starter_name"],
-                player_pos=self.player_pos,
-                defeated_entities=list(self.defeated_entities)
-            )
+            starter_id = save_data["starter_id"]
+            starter_name = save_data["starter_name"]
+        else:
+            # Fallback : récupérer depuis le joueur en mémoire
+            player = self.state_manager.shared_data.get("player")
+            if player and player.team:
+                starter_id = player.team[0].pokemon_id
+                starter_name = player.team[0].name.lower()
+            else:
+                print("[MapState] ATTENTION : impossible de sauvegarder, pas de données joueur")
+                return
+
+        save_manager.save_game(
+            starter_id=starter_id,
+            starter_name=starter_name,
+            player_pos=self.player_pos,
+            defeated_entities=list(self.defeated_entities)
+        )
 
     def draw(self, screen):   
         screen.fill((0, 0, 0))  # Fond noir 

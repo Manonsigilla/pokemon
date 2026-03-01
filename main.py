@@ -42,7 +42,6 @@ class Game:
         self.state_manager.register_state("evolution", EvolutionState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
         self.state_manager.register_state("map", MapState(self.state_manager))
-        self.state_manager.register_state("pokedex", PokedexState(self.state_manager))
         self.state_manager.register_state("inventory", InventoryState(self.state_manager))
         self.state_manager.change_state("title")
         self.state_manager.register_state("add_pokemon", AddPokemonState(self.state_manager))
