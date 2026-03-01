@@ -16,7 +16,7 @@ from config import (SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE,
                     BTN_IA, BTN_IA_HOVER,
                     BTN_FACILE, BTN_FACILE_HOVER,
                     BTN_NORMAL, BTN_NORMAL_HOVER,
-                    BTN_DIFFICILE, BTN_DIFFICILE_HOVER)
+                    BTN_DIFFICILE, BTN_DIFFICILE_HOVER, BTN_NVAVENTURE, BTN_NVAVENTURE_HOVER, BTN_POKEDEX, BTN_POKEDEX_HOVER)
 
 
 class TitleState(State):
@@ -33,6 +33,8 @@ class TitleState(State):
         self.bg_image = None
         self.has_save = False
         self.continue_button = None
+        self.pokedex_button = None          
+        self.pokedex_menu_buttons = []
 
     @property
     def title_font(self):
@@ -50,6 +52,7 @@ class TitleState(State):
         """Cree les boutons du menu."""
         sound_manager.play_music("pokemontheme.mp3")
         self._show_difficulty = False
+        self._show_pokedex_menu = False
 
         # ============ FOND ============
         try:
@@ -74,25 +77,27 @@ class TitleState(State):
 
         # ============ POSITIONS ============
         center_x = SCREEN_WIDTH // 2
-        btn_width = 300
-        btn_height = 60
+        btn_width = 290
+        btn_height = 50  # Reduit pour tout faire tenir
 
         if self.logo_image:
-            btn_start_y = 80 + self.logo_image.get_height() + 30
+            btn_start_y = 90 + self.logo_image.get_height() + 10
         else:
-            btn_start_y = 250
+            btn_start_y = 200
+
+        current_y = btn_start_y
+        spacing = 65  # Espacement entre boutons
 
         # ============ BOUTON CONTINUER (conditionnel) ============
-        current_y = btn_start_y
         if self.has_save:
             self.continue_button = Button(
                 center_x - btn_width // 2, current_y,
                 btn_width, btn_height,
-                text="Continuer aventure",
-                color=(50, 120, 200),
-                hover_color=(70, 150, 240)
+                image_normal=BTN_NVAVENTURE,
+                image_hover=BTN_NVAVENTURE_HOVER,
+                hide_text=True
             )
-            current_y += 70
+            current_y += spacing
         else:
             self.continue_button = None
 
@@ -106,20 +111,30 @@ class TitleState(State):
                 hide_text=True
             ),
             Button(
-                center_x - btn_width // 2, current_y + 70,
+                center_x - btn_width // 2, current_y + spacing,
                 btn_width, btn_height,
                 image_normal=BTN_PVP,
                 image_hover=BTN_PVP_HOVER,
                 hide_text=True
             ),
             Button(
-                center_x - btn_width // 2, current_y + 140,
+                center_x - btn_width // 2, current_y + spacing * 2,
                 btn_width, btn_height,
                 image_normal=BTN_IA,
                 image_hover=BTN_IA_HOVER,
                 hide_text=True
             ),
         ]
+
+        # ============ BOUTONS POKEDEX ============
+        self.pokedex_button = Button(
+            center_x - btn_width // 2, current_y + spacing * 3,
+            btn_width, btn_height,
+            image_normal=BTN_POKEDEX,
+            image_hover=BTN_POKEDEX_HOVER,
+            hide_text=True
+        )
+
 
         # ============ BOUTONS DIFFICULTE ============
         diff_btn_width = 200
@@ -161,6 +176,7 @@ class TitleState(State):
                 self.continue_button.check_hover(mouse_pos)
             for button in self.buttons:
                 button.check_hover(mouse_pos)
+            self.pokedex_button.check_hover(mouse_pos)
 
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -181,6 +197,10 @@ class TitleState(State):
                     elif self.buttons[2].check_click(mouse_pos, True):
                         sound_manager.play_select()
                         self._show_difficulty = True
+                    elif self.pokedex_button.check_click(mouse_pos, True):
+                        sound_manager.play_select()
+                        self.state_manager.shared_data["pokedex_return_to"] = "title"
+                        self.state_manager.change_state("pokedex")
 
             if event.type == pygame.KEYDOWN:
                 if self._show_difficulty:
@@ -259,12 +279,12 @@ class TitleState(State):
             # Logo
             if self.logo_image:
                 logo_x = (SCREEN_WIDTH - self.logo_image.get_width()) // 2
-                surface.blit(self.logo_image, (logo_x, 80))
+                surface.blit(self.logo_image, (logo_x, 60))
             else:
                 title = self.title_font.render("POKEMON", True, YELLOW)
                 title2 = self.title_font.render("BATTLE ARENA", True, RED)
-                surface.blit(title, ((SCREEN_WIDTH - title.get_width()) // 2, 100))
-                surface.blit(title2, ((SCREEN_WIDTH - title2.get_width()) // 2, 160))
+                surface.blit(title, ((SCREEN_WIDTH - title.get_width()) // 2, 80))
+                surface.blit(title2, ((SCREEN_WIDTH - title2.get_width()) // 2, 140))
 
             if self.continue_button:
                 self.continue_button.draw(surface)
@@ -272,11 +292,8 @@ class TitleState(State):
             for button in self.buttons:
                 button.draw(surface)
 
-            hint = self.subtitle_font.render(
-                "ou appuyez sur 1 / 2", True, (180, 180, 180)
-            )
-            hint_x = (SCREEN_WIDTH - hint.get_width()) // 2
-            surface.blit(hint, (hint_x, 500))
+            self.pokedex_button.draw(surface)
+
 
     def _load_and_continue(self):
         """Charge la sauvegarde et reprend l'aventure."""

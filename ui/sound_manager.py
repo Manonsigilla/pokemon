@@ -271,6 +271,9 @@ class SoundManager:
         """Regle le volume des SFX (0.0 a 1.0)."""
         self._sfx_volume = max(0.0, min(1.0, volume))
 
+    def play_battle_music(self):
+        """Joue la musique de combat en arene."""
+        self.play_music("battle.mp3")
 
 # Instance globale (singleton)
 sound_manager = SoundManager()

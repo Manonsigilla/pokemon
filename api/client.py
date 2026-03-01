@@ -8,6 +8,7 @@ from config import API_BASE_URL, SPRITE_URL_FRONT, SPRITE_URL_BACK, CACHE_DIR, D
 from api.cache import Cache
 from models.move import Move
 from models.pokemon import Pokemon
+from models.evolution import EvolutionManager
 
 
 class APIClient:
@@ -20,6 +21,8 @@ class APIClient:
 
         # Charger la BDD locale de Manon
         self.local_pokemon_db = self._load_local_pokemon_db()
+
+        self.evolution_manager = EvolutionManager()
 
     def _load_local_pokemon_db(self):
         """Charge bdd/pokemon.json en memoire. Retourne un dict {id: pokemon_data}."""
@@ -261,3 +264,36 @@ class APIClient:
                 selected.append(name)
 
         return selected[:4]
+    
+    def evolve_pokemon(self, pokemon):
+        """Fait evoluer un Pokemon si possible.
+
+        Args:
+            pokemon: Objet Pokemon a faire evoluer
+
+        Returns:
+            tuple: (a_evolue: bool, message: str)
+        """
+        evo_id = self.evolution_manager.get_evolution_id(pokemon)
+        if evo_id is None:
+            return False, ""
+
+        try:
+            evo_data = self.fetch_pokemon_data(evo_id)
+            front_sprite = self.download_sprite(evo_id, "front")
+            back_sprite = self.download_sprite(evo_id, "back")
+
+            message = pokemon.evolve(
+                new_id=evo_data["id"],
+                new_name=evo_data["name"],
+                new_types=evo_data["types"],
+                new_base_stats=evo_data["stats"],
+                new_front_sprite=front_sprite,
+                new_back_sprite=back_sprite,
+            )
+
+            return True, message
+
+        except Exception as e:
+            print(f"[Evolution] Erreur evolution: {e}")
+            return False, ""

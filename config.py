@@ -155,6 +155,8 @@ BG_MENU = os.path.join(IMAGES_DIR, "bg_menu.png")
 BG_SELECTION = os.path.join(IMAGES_DIR, "bg_selection.jpg")
 
 # --- Boutons menu principal ---
+BTN_NVAVENTURE = os.path.join(IMAGES_DIR, "btn_nvaventure.png")
+BTN_NVAVENTURE_HOVER = os.path.join(IMAGES_DIR, "btn_nvaventure_hover.png")
 BTN_AVENTURE = os.path.join(IMAGES_DIR, "btn_aventure.png")
 BTN_AVENTURE_HOVER = os.path.join(IMAGES_DIR, "btn_aventure_hover.png")
 BTN_PVP = os.path.join(IMAGES_DIR, "btn_pvp.png")
@@ -169,3 +171,14 @@ BTN_NORMAL = os.path.join(IMAGES_DIR, "btn_normal.png")
 BTN_NORMAL_HOVER = os.path.join(IMAGES_DIR, "btn_normal_hover.png")
 BTN_DIFFICILE = os.path.join(IMAGES_DIR, "btn_difficile.png")
 BTN_DIFFICILE_HOVER = os.path.join(IMAGES_DIR, "btn_difficile_hover.png")
+
+# --- Boutons Pokedex et Ajouter Pokemon ---
+BTN_POKEDEX = os.path.join(IMAGES_DIR, "btn_pokedex.png")
+BTN_POKEDEX_HOVER = os.path.join(IMAGES_DIR, "btn_pokedex_hover.png")
+
+BTN_AJOUT = os.path.join(IMAGES_DIR, "btn_ajout.png")
+BTN_AJOUT_HOVER = os.path.join(IMAGES_DIR, "btn_ajout_hover.png")
+
+# --- Pokedex ---
+BG_POKEDEX = os.path.join(IMAGES_DIR, "bg_pokedex.jpg")
+POKEDEX_TITLE_IMG = os.path.join(IMAGES_DIR, "pokedex_title.png")
