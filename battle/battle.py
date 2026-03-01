@@ -141,17 +141,25 @@ class Battle:
 
         return messages
 
-    def end_battle(self):
+    def end_battle(self, is_adventure=False):
         """Termine le combat et enregistre les Pokemon dans le Pokedex."""
         if self.is_over and self.winner and self.loser:
-            # Enregistrer tous les Pokemon rencontres dans le Pokedex du gagnant
+            # ============ GAIN D'XP (aventure uniquement) ============
+            if is_adventure:
+                loser_avg_level = sum(p.level for p in self.loser.team) / max(1, len(self.loser.team))
+                base_xp = int(loser_avg_level * 10)
+
+                for pokemon in self.winner.team:
+                    if not pokemon.is_fainted():
+                        messages = pokemon.gain_xp(base_xp)
+                        for msg in messages:
+                            print(f"[XP] {msg}")
+
+            # Enregistrer dans le Pokedex
             for pokemon in self.loser.team:
                 self.combat.save_to_pokedex(pokemon)
-            
-            # Enregistrer aussi les Pokemon du gagnant (auto-enregistrement)
             for pokemon in self.winner.team:
                 self.combat.save_to_pokedex(pokemon)
-
     def get_fainted_player(self):
         """Retourne le numero du joueur dont le Pokemon actif est KO (1 ou 2), ou None."""
         if self.pokemon1.is_fainted() and self.player1.has_alive_pokemon():

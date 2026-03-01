@@ -32,30 +32,8 @@ class ResultState(State):
             self._font_info = get_font(14)
         return self._font_info
 
-    def enter(self):
-        """Recupere le gagnant depuis les donnees partagees."""
-        sound_manager.play_victory()
-        self.winner = self.state_manager.shared_data.get("winner")
-
-        # Gestion de la victoire en mode aventure pour supprimer l'entite de la carte
-        winner_player = self.state_manager.shared_data.get("winner_player")
-        player1 = self.state_manager.shared_data.get("player1")
-        target_name = self.state_manager.shared_data.pop("current_encounter_name", None)
-        loser_player = self.state_manager.shared_data.get("loser_player")
-
-        self.is_adventure = self.state_manager.shared_data.get("adventure_return", False)
-        self.captured = False
-
-        if target_name and winner_player and player1 and winner_player == player1:
-            self.state_manager.shared_data["victorious_over"] = target_name
-            # Capturer le pokemon sauvage
-            if loser_player and loser_player.name == "Pokémon Sauvage" and len(loser_player.team) > 0:
-                caught_pokemon = loser_player.team[0]
-                player1.add_pokemon(caught_pokemon)
-                self.captured = True
-
-        # ============ EVOLUTION ============
-        # Verifier si des Pokemon du gagnant peuvent evoluer
+    # ============ EVOLUTION ============
+    # Verifier si des Pokemon du gagnant peuvent evoluer
     def enter(self):
         """Recupere le gagnant depuis les donnees partagees."""
         sound_manager.play_victory()
@@ -76,6 +54,9 @@ class ResultState(State):
                 caught_pokemon = loser_player.team[0]
                 player1.add_pokemon(caught_pokemon)
                 self.captured = True
+                
+        # Vérifier si des pokémon du gagnant peuvent évoluer
+        
 
         # Charger le sprite du gagnant
         if self.winner:

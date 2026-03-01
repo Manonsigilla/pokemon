@@ -24,6 +24,10 @@ class Pokemon:
         self.sp_attack = self._calc_stat(base_stats["special-attack"], level)
         self.sp_defense = self._calc_stat(base_stats["special-defense"], level)
         self.speed = self._calc_stat(base_stats["speed"], level)
+        
+        # Système d'XP
+        self.xp = 0
+        self.xp_to_next_level = self._calc_xp_needed(level)
 
         # Attaques (liste de Move, max 4)
         self.moves = moves
@@ -96,7 +100,7 @@ class Pokemon:
         return self.sp_defense
 
     def evolve(self, new_id, new_name, new_types, new_base_stats,
-               new_front_sprite, new_back_sprite, new_moves=None):
+            new_front_sprite, new_back_sprite, new_moves=None):
         """Fait evoluer le Pokemon : change ses donnees tout en gardant le niveau et le ratio PV."""
         old_name = self.name
         hp_ratio = self.current_hp / self.max_hp if self.max_hp > 0 else 1.0
@@ -132,3 +136,39 @@ class Pokemon:
     def __str__(self):
         types_str = "/".join(t.title() for t in self.types)
         return f"{self.name} (Nv.{self.level}) [{types_str}] PV: {self.current_hp}/{self.max_hp}"
+
+    def _calc_xp_needed(self, level):
+        """XP necessaire pour le prochain niveau (formule simplifiee)."""
+        return level * level * 3  # Ex: niv.5 = 75 XP, niv.10 = 300 XP
+
+    def gain_xp(self, amount):
+        """Ajoute de l'XP et monte de niveau si necessaire.
+        
+        Returns:
+            list: Messages a afficher (XP gagnee, level up, etc.)
+        """
+        messages = []
+        self.xp += amount
+        messages.append(f"{self.name} gagne {amount} points d'EXP !")
+
+        while self.xp >= self.xp_to_next_level:
+            self.xp -= self.xp_to_next_level
+            self._level_up()
+            messages.append(f"{self.name} monte au niveau {self.level} !")
+            self.xp_to_next_level = self._calc_xp_needed(self.level)
+
+        return messages
+
+    def _level_up(self):
+        """Monte d'un niveau et recalcule les stats."""
+        self.level += 1
+        old_max_hp = self.max_hp
+
+        # Recalculer toutes les stats
+        self.max_hp = self._calc_hp(self.base_stats["hp"], self.level)
+        self.current_hp += (self.max_hp - old_max_hp)  # Bonus HP proportionnel
+        self.attack = self._calc_stat(self.base_stats["attack"], self.level)
+        self.defense = self._calc_stat(self.base_stats["defense"], self.level)
+        self.sp_attack = self._calc_stat(self.base_stats["special-attack"], self.level)
+        self.sp_defense = self._calc_stat(self.base_stats["special-defense"], self.level)
+        self.speed = self._calc_stat(self.base_stats["speed"], self.level)
