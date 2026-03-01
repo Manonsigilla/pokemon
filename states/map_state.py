@@ -10,6 +10,7 @@ from states.state import State
 import save_manager
 from config import BASE_DIR, SCREEN_WIDTH, SCREEN_HEIGHT, get_font
 from models.player import Player
+from ui.sound_manager import sound_manager
 
 TILE_SIZE = 16
 
@@ -52,6 +53,7 @@ class MapState(State):
         
     def enter(self):
         print("Entré dans MapState")
+        sound_manager.play_music("pokemontheme.mp3")
         self.tmx_data = load_pygame(self.map_file)
         self.width = self.tmx_data.width
         self.height = self.tmx_data.height
@@ -420,8 +422,8 @@ class MapState(State):
             overlay.fill((0, 0, 0, 180))
             screen.blit(overlay, (0, 0))
             
-            menu_w = 300
-            menu_h = 240
+            menu_w = 360
+            menu_h = 250
             menu_x = (SCREEN_WIDTH - menu_w) // 2
             menu_y = (SCREEN_HEIGHT - menu_h) // 2
             
@@ -433,11 +435,18 @@ class MapState(State):
             title_surf = font_title.render("MENU", True, (255, 255, 255))
             screen.blit(title_surf, (menu_x + (menu_w - title_surf.get_width())//2, menu_y + 15))
             
-            font_opt = get_font(18)
             start_y = menu_y + 70
+            text_area_width = menu_w - 60
             for i, option in enumerate(self.menu_options):
                 color = (255, 255, 0) if i == self.menu_index else (200, 200, 200)
+                font_size = 18
+                font_opt = get_font(font_size)
                 opt_surf = font_opt.render(option, True, color)
+                while opt_surf.get_width() > text_area_width and font_size > 10:
+                    font_size -= 1
+                    font_opt = get_font(font_size)
+                    opt_surf = font_opt.render(option, True, color)
+
                 screen.blit(opt_surf, (menu_x + 50, start_y + i * 40))
                 if i == self.menu_index:
                     # Petit curseur
