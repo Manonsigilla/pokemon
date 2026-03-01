@@ -9,6 +9,10 @@ from ui.sprite_loader import SpriteLoader
 from ui.button import Button
 from ui.sound_manager import sound_manager
 
+# Manon : taille fixe pour TOUS les sprites dans le pokedex (custom ou non)
+# Cela garantit que la photo uploadee sera redimensionnee au meme format
+POKEDEX_SPRITE_SIZE = 64
+
 
 class PokedexState(State):
     def __init__(self, state_manager):
@@ -87,7 +91,17 @@ class PokedexState(State):
         self._calc_max_scroll()
 
     def _load_sprites(self):
-        """Charge les sprites depuis les URLs de bdd/pokemon.json via le cache."""
+        """Charge les sprites pour chaque pokemon du pokedex.
+
+        Manon : cette methode gere maintenant 3 cas :
+        1. Sprite custom local (chemin dans pokedex.json > "sprite")
+        2. Sprite depuis bdd/pokemon.json (URL PokeAPI, telecharge en cache)
+        3. Fichier local depuis bdd/pokemon.json (chemin absolu)
+
+        IMPORTANT : tous les sprites sont redimensionnes a POKEDEX_SPRITE_SIZE
+        pour que les photos custom aient la meme taille que les sprites PokeAPI.
+        C'est ce qui manquait avant et causait le probleme d'image geante.
+        """
         import urllib.request
 
         cache_dir = os.path.join(BASE_DIR, "cache", "starter_sprites")
@@ -100,7 +114,26 @@ class PokedexState(State):
             if name in self.sprites_cache:
                 continue
 
-            # Chercher dans bdd/pokemon.json
+            sprite_loaded = False
+
+            # --- CAS 1 : sprite custom stocke dans pokedex.json ---
+            # Manon : quand on ajoute un pokemon custom, le champ "sprite"
+            # contient le chemin local vers l'image (ex: assets/sprites/custom/...)
+            pokedex_sprite = pk.get("sprite", "")
+            if pokedex_sprite and os.path.exists(pokedex_sprite):
+                try:
+                    img = pygame.image.load(pokedex_sprite).convert_alpha()
+                    # Redimensionner a la taille standard du pokedex
+                    img = self._resize_sprite(img, POKEDEX_SPRITE_SIZE)
+                    self.sprites_cache[name] = img
+                    sprite_loaded = True
+                except Exception as e:
+                    print(f"[Pokedex] Erreur chargement sprite custom {name}: {e}")
+
+            if sprite_loaded:
+                continue
+
+            # --- CAS 2 & 3 : chercher dans bdd/pokemon.json ---
             bdd_entry = None
             for bp in self.bdd_pokemon:
                 if bp["id"] == pk_id:
@@ -114,7 +147,18 @@ class PokedexState(State):
             if not sprite_url:
                 continue
 
-            # Telecharger ou utiliser le cache
+            # Verifier si c'est un fichier local (chemin absolu ou relatif)
+            if os.path.exists(sprite_url):
+                # CAS 3 : fichier local depuis bdd/pokemon.json
+                try:
+                    img = pygame.image.load(sprite_url).convert_alpha()
+                    img = self._resize_sprite(img, POKEDEX_SPRITE_SIZE)
+                    self.sprites_cache[name] = img
+                except Exception:
+                    pass
+                continue
+
+            # CAS 2 : URL PokeAPI, telecharger en cache
             filename = sprite_url.split("/")[-1]
             filepath = os.path.join(cache_dir, filename)
 
@@ -126,10 +170,29 @@ class PokedexState(State):
 
             if os.path.exists(filepath):
                 try:
-                    sprite = self.sprite_loader.load_sprite(filepath, scale=2)
-                    self.sprites_cache[name] = sprite
+                    img = pygame.image.load(filepath).convert_alpha()
+                    # Manon : on redimensionne aussi les sprites PokeAPI
+                    # pour avoir une taille uniforme dans la grille
+                    img = self._resize_sprite(img, POKEDEX_SPRITE_SIZE)
+                    self.sprites_cache[name] = img
                 except Exception:
                     pass
+
+    def _resize_sprite(self, surface, target_size):
+        """Redimensionne un sprite en gardant le ratio, dans un carre target_size x target_size.
+
+        Manon : cette methode garantit que TOUS les sprites (PokeAPI ou custom)
+        ont exactement la meme taille dans la grille du pokedex.
+        """
+        w = surface.get_width()
+        h = surface.get_height()
+
+        # Calculer le ratio pour tenir dans le carre cible
+        ratio = min(target_size / w, target_size / h)
+        new_w = int(w * ratio)
+        new_h = int(h * ratio)
+
+        return pygame.transform.smoothscale(surface, (new_w, new_h))
 
     def _calc_max_scroll(self):
         seen = set()
@@ -227,7 +290,6 @@ class PokedexState(State):
         card_spacing_x = 10
         card_spacing_y = 15
 
-        # Centrer la grille horizontalement
         total_grid_width = max_col * card_width + (max_col - 1) * card_spacing_x
         grid_start_x = (SCREEN_WIDTH - total_grid_width) // 2
 
@@ -266,11 +328,12 @@ class PokedexState(State):
                     sprite_area_width = 80
 
                     if sprite:
+                        # Manon : le sprite est deja redimensionne par _resize_sprite()
+                        # donc il tient toujours dans la zone 80x160
                         sx = x + (sprite_area_width - sprite.get_width()) // 2
                         sy = y + (card_height - sprite.get_height()) // 2
                         content_surface.blit(sprite, (sx, sy))
                     else:
-                        # Placeholder gris
                         placeholder = pygame.Surface((48, 48), pygame.SRCALPHA)
                         placeholder.fill((80, 80, 80, 100))
                         px = x + (sprite_area_width - 48) // 2
@@ -286,12 +349,10 @@ class PokedexState(State):
                     # Nom
                     name_display = name
                     name_surf = font_name.render(name, True, WHITE)
-                    # Tronquer si trop long
                     if name_surf.get_width() > text_max_width:
-                        while name_surf.get_width() > text_max_width and len(name) > 3:
-                            name = name[:-1]
-                            name_surf = font_name.render(name + "..", True, WHITE)
-                    name_x = text_x + (text_max_width - name_surf.get_width()) // 2
+                        while name_surf.get_width() > text_max_width and len(name_display) > 3:
+                            name_display = name_display[:-1]
+                            name_surf = font_name.render(name_display + "..", True, WHITE)
                     content_surface.blit(name_surf, (text_x, y + 10))
 
                     # ID
@@ -309,20 +370,24 @@ class PokedexState(State):
                             type_surf = font_type.render(type_text_short + "..", True, (180, 180, 180))
                     content_surface.blit(type_surf, (text_x, y + 50))
 
-                    # Stats sur 2 lignes
+                    # Stats sur 3 lignes courtes pour ne pas depasser du cadre
                     hp = pk.get("hp", "?")
                     atk = pk.get("attack", "?")
                     dfn = pk.get("defense", "?")
 
-                    line1 = f"PV: {hp}  ATK: {atk}"
-                    line2 = f"DEF: {dfn}"
+                    stat_lines = [
+                        f"PV: {hp}",
+                        f"ATK: {atk}",
+                        f"DEF: {dfn}",
+                    ]
+                    for si, stat_line in enumerate(stat_lines):
+                        stat_surf = font_stats.render(stat_line, True, (140, 140, 140))
+                        # Si le texte depasse quand meme, on le tronque
+                        if stat_surf.get_width() > text_max_width:
+                            stat_surf = font_stats.render(stat_line[:10] + "..", True, (140, 140, 140))
+                        content_surface.blit(stat_surf, (text_x, y + 75 + si * 14))
 
-                    stats1_surf = font_stats.render(line1, True, (140, 140, 140))
-                    stats2_surf = font_stats.render(line2, True, (140, 140, 140))
-                    content_surface.blit(stats1_surf, (text_x, y + 75))
-                    content_surface.blit(stats2_surf, (text_x, y + 92))
-
-                    # Bordure coloree a gauche selon le type principal
+                    # Bordure coloree a gauche
                     from config import TYPE_COLORS
                     if types:
                         type_color = TYPE_COLORS.get(types[0], (150, 150, 150))

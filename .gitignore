@@ -47,3 +47,6 @@ Thumbs.db
 # Fichiers de sauvegarde du jeu (générés dynamiquement)
 savegame.json
 pokedex.json
+
+# Images custom uploadees par les joueurs (propres a chaque joueur)
+assets/sprites/custom/
