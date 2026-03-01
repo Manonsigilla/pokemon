@@ -155,11 +155,11 @@ class Battle:
                         for msg in messages:
                             print(f"[XP] {msg}")
 
-            # Enregistrer dans le Pokedex
-            for pokemon in self.loser.team:
-                self.combat.save_to_pokedex(pokemon)
-            for pokemon in self.winner.team:
-                self.combat.save_to_pokedex(pokemon)
+                # Enregistrer dans le Pokedex
+                for pokemon in self.loser.team:
+                    self.combat.save_to_pokedex(pokemon)
+                for pokemon in self.winner.team:
+                    self.combat.save_to_pokedex(pokemon)
     def get_fainted_player(self):
         """Retourne le numero du joueur dont le Pokemon actif est KO (1 ou 2), ou None."""
         if self.pokemon1.is_fainted() and self.player1.has_alive_pokemon():
