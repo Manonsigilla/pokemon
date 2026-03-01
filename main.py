@@ -2,15 +2,19 @@
 
 import pygame
 
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE  # Corrigé : pas "pokemon.config"
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, TITLE  
 from api.client import APIClient
 from models.type_chart import TypeChart
+from models.combat import Combat
 from states.state_manager import StateManager
 from states.title_state import TitleState
 from states.selection_state import SelectionState
 from states.battle.battle_state import BattleState
 from states.result_state import ResultState
 from states.starter_selection_state import StarterSelectionState
+from states.map_state import MapState 
+from states.pokedex_state import PokedexState
+from states.inventory_state import InventoryState
 
 
 class Game:
@@ -26,6 +30,7 @@ class Game:
         # Services partages
         self.api_client = APIClient()
         self.type_chart = TypeChart()
+        self.combat = Combat(self.type_chart)
 
         # State machine
         self.state_manager = StateManager()
@@ -34,7 +39,10 @@ class Game:
         self.state_manager.register_state("battle", BattleState(self.state_manager, self.type_chart))
         self.state_manager.register_state("result", ResultState(self.state_manager))
         self.state_manager.register_state("starter_selection", StarterSelectionState(self.state_manager))
-        self.state_manager.change_state("starter_selection")
+        self.state_manager.register_state("map", MapState(self.state_manager))
+        self.state_manager.register_state("pokedex", PokedexState(self.state_manager))
+        self.state_manager.register_state("inventory", InventoryState(self.state_manager))
+        self.state_manager.change_state("title")
 
     def run(self):
         """Boucle principale du jeu."""

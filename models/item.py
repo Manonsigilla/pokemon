@@ -57,4 +57,5 @@ ITEMS_DATABASE = {
     "pokeball": Item("Poké Ball", "Capture un Pokémon sauvage", "pokeball", 1, 200),
     "superball": Item("Super Ball", "Meilleur taux de capture", "pokeball", 1.5, 600),
     "hyperball": Item("Hyper Ball", "Excellent taux de capture", "pokeball", 2, 1200),
+    "baies_ameres": Item("Baies amères", "Une baie amère. Peut être utilisée.", "heal", 0, 50),
 }

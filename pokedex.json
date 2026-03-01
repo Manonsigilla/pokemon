@@ -1,77 +1,25 @@
 {
     "pokemon": [
         {
-            "id": 43,
-            "name": "mystherbe",
+            "id": 4,
+            "name": "salamèche",
             "type": [
-                "grass",
-                "poison"
+                "fire"
             ],
-            "defense": 60,
-            "attack": 55,
-            "hp": 105
-        },
-        {
-            "id": 9,
-            "name": "tortank",
-            "type": [
-                "water"
-            ],
-            "defense": 105,
-            "attack": 88,
-            "hp": 139
-        },
-        {
-            "id": 52,
-            "name": "miaouss",
-            "type": [
-                "normal"
-            ],
-            "defense": 40,
-            "attack": 50,
-            "hp": 100
-        },
-        {
-            "id": 30,
-            "name": "nidorina",
-            "type": [
-                "poison"
-            ],
-            "defense": 72,
-            "attack": 67,
-            "hp": 130
-        },
-        {
-            "id": 20,
-            "name": "rattatac",
-            "type": [
-                "normal"
-            ],
-            "defense": 65,
-            "attack": 86,
-            "hp": 115
-        },
-        {
-            "id": 113,
-            "name": "leveinard",
-            "type": [
-                "normal"
-            ],
-            "defense": 10,
+            "defense": 9,
             "attack": 10,
-            "hp": 310
+            "hp": 18
         },
         {
-            "id": 6,
-            "name": "dracaufeu",
+            "id": 19,
+            "name": "rattata",
             "type": [
-                "fire",
-                "flying"
+                "normal"
             ],
-            "defense": 83,
-            "attack": 89,
-            "hp": 138
+            "defense": 7,
+            "attack": 9,
+            "hp": 16
         }
     ],
-    "count": 7
+    "count": 2
 }

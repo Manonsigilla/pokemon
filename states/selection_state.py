@@ -9,8 +9,7 @@ from models.player import Player
 from ui.pokemon_card import PokemonCard
 from ui.sprite_loader import SpriteLoader
 from ui.sound_manager import sound_manager
-from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK,
-                    YELLOW, AVAILABLE_POKEMON_IDS, render_fitted_text)
+from config import (SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, BG_DARK, YELLOW, AVAILABLE_POKEMON_IDS, render_fitted_text, BG_SELECTION)
 from config import GAME_FONT
 
 
@@ -41,6 +40,7 @@ class SelectionState(State):
         self._font_info = None
         self._font_loading = None
         self._font_counter = None
+        self.bg_image = None
 
     @property
     def font_title(self):
@@ -68,6 +68,14 @@ class SelectionState(State):
 
     def enter(self):
         """Lance le chargement des Pokemon."""
+        # ============ FOND D'ECRAN ============
+        try:
+            bg = pygame.image.load(BG_SELECTION).convert()
+            self.bg_image = pygame.transform.scale(bg, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        except Exception as e:
+            print(f"[SelectionState] Fond introuvable ({e}), fallback couleur")
+            self.bg_image = None
+
         self.current_player = 1
         self.selected = {1: [], 2: []}
         self.loading = True
@@ -266,8 +274,16 @@ class SelectionState(State):
 
     def draw(self, surface):
         """Dessine l'ecran de selection style Pokedex (Angie)."""
-        surface.fill(self.POKEDEX_DARK)
-
+        # Fond
+        if self.bg_image:
+            surface.blit(self.bg_image, (0, 0))
+            # Overlay sombre pour que les cartes restent lisibles
+            overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            overlay.fill((0, 0, 0, 140))
+            surface.blit(overlay, (0, 0))
+        else:
+            surface.fill(self.POKEDEX_DARK)
+            
         # Bandeau rouge (Angie)
         pygame.draw.rect(surface, self.POKEDEX_RED, (0, 0, SCREEN_WIDTH, 70))
         pygame.draw.rect(surface, (180, 40, 40), (0, 65, SCREEN_WIDTH, 5))

@@ -68,7 +68,11 @@ class BattleInput:
                     # Manon : verifier fuite
                     if self._fleeing:
                         self._fleeing = False
-                        self.state_manager.change_state("title")
+                        if self.state_manager.shared_data.pop("adventure_return", False):
+                            self.state_manager.shared_data.pop("current_encounter_name", None)
+                            self.state_manager.change_state("map")
+                        else:
+                            self.state_manager.change_state("title")
                         return
 
                     if self.battle.is_over:

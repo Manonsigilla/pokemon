@@ -1,2 +1,4 @@
 pygame>=2.5.0
 requests>=2.31.0
+# Pour faire fonctionner la carte tmx
+pytmx>=3.0.0
