@@ -43,3 +43,7 @@ Thumbs.db
 
 # local duplicate copies
 * 2.*
+
+# Fichiers de sauvegarde du jeu (générés dynamiquement)
+savegame.json
+pokedex.json
