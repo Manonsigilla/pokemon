@@ -21,7 +21,7 @@ class SoundManager:
     def __init__(self):
         self._initialized = False
         self._music_volume = 0.4
-        self._sfx_volume = 0.5
+        self._sfx_volume = 0.8
         self._sfx_cache = {}
         self._current_music = None
         self._init_mixer()

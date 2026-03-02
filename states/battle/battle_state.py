@@ -101,7 +101,9 @@ class BattleState(BattleRenderer, BattleInput, BattleLogic, BattleAnimation, Sta
         mode = self.state_manager.shared_data.get("mode", "pvp")
 
         # Creer le combat avec les Players (Manon)
-        self.battle = Battle(player1, player2, self.type_chart, battle_type="arena")
+        is_adventure = self.state_manager.shared_data.get("adventure_return", False)
+        bt = "wild" if is_adventure else "arena"
+        self.battle = Battle(player1, player2, self.type_chart, battle_type=bt)
 
         # IA si mode PvIA
         self.ai_difficulty = self.state_manager.shared_data.get("ai_difficulty", "normal")
