@@ -374,11 +374,13 @@ class PokedexState(State):
                     hp = pk.get("hp", "?")
                     atk = pk.get("attack", "?")
                     dfn = pk.get("defense", "?")
+                    level = pk.get("level", "?")
 
                     stat_lines = [
                         f"PV: {hp}",
                         f"ATK: {atk}",
                         f"DEF: {dfn}",
+                        f"Niv: {level}",
                     ]
                     for si, stat_line in enumerate(stat_lines):
                         stat_surf = font_stats.render(stat_line, True, (140, 140, 140))

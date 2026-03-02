@@ -185,7 +185,7 @@ class SoundManager:
             samples = int(sample_rate * duration)
             buf = array.array("h", [0] * samples)
             notes = [(523, 0.0, 0.18), (659, 0.2, 0.18),
-                     (784, 0.4, 0.18), (1047, 0.6, 0.2)]
+                    (784, 0.4, 0.18), (1047, 0.6, 0.2)]
             for i in range(samples):
                 t = i / sample_rate
                 val = 0

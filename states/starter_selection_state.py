@@ -185,8 +185,13 @@ class StarterSelectionState(State):
         Returns:
             str: Chemin local du sprite telecharge, ou None si echec
         """
-        # Creer un nom de fichier unique base sur l'URL
-        filename = url.split("/")[-1]
+        if not url:
+            return None
+        
+        # Construire un nom unique basé sur le chemin complet de l'URL
+        # ex: "back/4.png" → "back_4.png", "4.png" → "4.png"
+        parts = url.split("/sprites/")[-1]          # "pokemon/4.png" ou "pokemon/back/4.png"
+        filename = parts.replace("/", "_")           # "pokemon_4.png" ou "pokemon_back_4.png"
         filepath = os.path.join(self.cache_dir, filename)
         
         # Si deja en cache, retourner le chemin
@@ -406,6 +411,10 @@ class StarterSelectionState(State):
         
         front_sprite_path = self._download_sprite(front_sprite_url)
         back_sprite_path = self._download_sprite(back_sprite_url)
+        
+        # Debug explicite pour tracer le problème
+        print(f"[StarterSelection] front_sprite_path = {front_sprite_path}")
+        print(f"[StarterSelection] back_sprite_path  = {back_sprite_path}")
         
         # ============ CREATION DU POKEMON ============
         pokemon = Pokemon(

@@ -160,7 +160,8 @@ class Combat:
             "type": pokemon.types,
             "defense": pokemon.defense,
             "attack": pokemon.attack,
-            "hp": pokemon.max_hp
+            "hp": pokemon.max_hp,
+            "level": pokemon.level
         }
         
         # Ajouter au pokedex
